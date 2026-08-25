@@ -176,10 +176,10 @@ function render() {
         </a>
         <ul class="navbar-nav" id="navMenu">
           <li><a href="#inicio" class="active">Inicio</a></li>
+          <li><a href="#perfil">Mi Perfil</a></li>
           <li><a href="#empleos">Empleos</a></li>
           <li><a href="#calificaciones">Calificaciones</a></li>
           <li><a href="#ia">Asistente IA</a></li>
-          <li><a href="#perfil">Mi Perfil</a></li>
         </ul>
         <div class="navbar-actions">
           <button class="btn btn-primary" id="loginBtn">Iniciar Sesión</button>
@@ -225,122 +225,6 @@ function render() {
           <div class="stat-number">94%</div>
           <div class="stat-label">Satisfacción</div>
         </div>
-      </div>
-    </section>
-
-    <!-- SEARCH -->
-    <section class="search-section" id="buscar">
-      <div class="search-container">
-        <div class="search-row">
-          <div class="search-input-group">
-            ${icons.search}
-            <input type="text" id="searchKeyword" placeholder="Buscar empleo por palabra clave..." />
-          </div>
-          <div class="search-divider"></div>
-          <div class="search-input-group">
-            ${icons.location}
-            <input type="text" id="searchLocation" placeholder="Ubicación" />
-          </div>
-          <button class="btn btn-primary btn-lg" id="searchBtn">
-            ${icons.search} Buscar
-          </button>
-        </div>
-        <div class="search-tags" id="searchTags">
-          ${suggestedTags.map(tag => `<button class="search-tag" data-tag="${tag}">${tag}</button>`).join('')}
-        </div>
-      </div>
-    </section>
-
-    <!-- JOB OFFERS -->
-    <section class="section" id="empleos">
-      <div class="section-header">
-        <div class="overline">Ofertas de Empleo</div>
-        <h2>Encuentra tu oportunidad ideal</h2>
-        <p>Explora ofertas de las mejores empresas, filtradas según tu perfil y preferencias.</p>
-      </div>
-      <div class="jobs-grid" id="jobsGrid">
-        ${jobOffers.map(job => `
-          <div class="job-card" data-id="${job.id}">
-            <div class="job-card-header">
-              <div class="job-company-logo" style="background: ${job.logoColor}">${job.logo}</div>
-              <span class="job-badge ${job.badge}">${job.badge === 'new' ? 'Nuevo' : 'Urgente'}</span>
-            </div>
-            <h3>${job.title}</h3>
-            <div class="company-name">${job.company}</div>
-            <p class="job-description">${job.description}</p>
-            <div class="job-tags">
-              ${job.tags.map(tag => `<span class="job-tag">${tag}</span>`).join('')}
-            </div>
-            <div class="job-card-footer">
-              <span class="job-salary">${job.salary}</span>
-              <span class="job-location">
-                ${icons.location} ${job.location}
-              </span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </section>
-
-    <!-- FEATURES -->
-    <section class="section" id="features">
-      <div class="section-header">
-        <div class="overline">Por Qué NextStepp</div>
-        <h2>Herramientas que impulsan tu carrera</h2>
-        <p>Todo lo que necesitas para encontrar el empleo perfecto en una sola plataforma.</p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">${icons.ai}</div>
-          <h3>IA Inteligente</h3>
-          <p>Asistente potenciado por Groq que analiza tu perfil y te recomienda las mejores oportunidades laborales.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">${icons.doc}</div>
-          <h3>Generador de CV</h3>
-          <p>Crea un CV profesional con nuestra herramienta de IA que destaca tus habilidades y experiencia.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">${icons.search}</div>
-          <h3>Búsqueda Avanzada</h3>
-          <p>Encuentra empleos por palabra clave, ubicación, empresa o habilidades específicas.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">${icons.star}</div>
-          <h3>Calificación Profesional</h3>
-          <p>Sistema de evaluación por porcentaje que muestra tu nivel de competencia y áreas de mejora.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- RATINGS -->
-    <section class="section" id="calificaciones">
-      <div class="section-header">
-        <div class="overline">Calificaciones</div>
-        <h2>Profesionales que confían en nosotros</h2>
-        <p>Conoce las experiencias y calificaciones de nuestra comunidad de profesionales.</p>
-      </div>
-      <div class="ratings-grid" id="ratingsGrid">
-        ${ratings.map(r => `
-          <div class="rating-card">
-            <div class="rating-header">
-              <div class="rating-avatar">${r.initials}</div>
-              <div class="rating-user-info">
-                <h4>${r.name}</h4>
-                <span>${r.role}</span>
-              </div>
-              <div class="rating-percentage">
-                <div class="percent">${r.percentage}%</div>
-                <div class="label">Match</div>
-              </div>
-            </div>
-            ${renderStars(r.stars)}
-            <div class="rating-bar">
-              <div class="rating-bar-fill" data-width="${r.percentage}"></div>
-            </div>
-            <p class="rating-text">"${r.text}"</p>
-          </div>
-        `).join('')}
       </div>
     </section>
 
@@ -417,6 +301,122 @@ function render() {
         <button class="btn btn-lg" onclick="scrollTo('#perfil')">
           ${icons.doc} Crear Mi CV Ahora
         </button>
+      </div>
+    </section>
+
+    <!-- JOB OFFERS -->
+    <section class="section" id="empleos">
+      <div class="section-header">
+        <div class="overline">Ofertas de Empleo</div>
+        <h2>Encuentra tu oportunidad ideal</h2>
+        <p>Explora ofertas de las mejores empresas, filtradas según tu perfil y preferencias.</p>
+      </div>
+      <div class="jobs-grid" id="jobsGrid">
+        ${jobOffers.map(job => `
+          <div class="job-card" data-id="${job.id}">
+            <div class="job-card-header">
+              <div class="job-company-logo" style="background: ${job.logoColor}">${job.logo}</div>
+              <span class="job-badge ${job.badge}">${job.badge === 'new' ? 'Nuevo' : 'Urgente'}</span>
+            </div>
+            <h3>${job.title}</h3>
+            <div class="company-name">${job.company}</div>
+            <p class="job-description">${job.description}</p>
+            <div class="job-tags">
+              ${job.tags.map(tag => `<span class="job-tag">${tag}</span>`).join('')}
+            </div>
+            <div class="job-card-footer">
+              <span class="job-salary">${job.salary}</span>
+              <span class="job-location">
+                ${icons.location} ${job.location}
+              </span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="search-section" id="buscar">
+      <div class="search-container">
+        <div class="search-row">
+          <div class="search-input-group">
+            ${icons.search}
+            <input type="text" id="searchKeyword" placeholder="Buscar empleo por palabra clave..." />
+          </div>
+          <div class="search-divider"></div>
+          <div class="search-input-group">
+            ${icons.location}
+            <input type="text" id="searchLocation" placeholder="Ubicación" />
+          </div>
+          <button class="btn btn-primary btn-lg" id="searchBtn">
+            ${icons.search} Buscar
+          </button>
+        </div>
+        <div class="search-tags" id="searchTags">
+          ${suggestedTags.map(tag => `<button class="search-tag" data-tag="${tag}">${tag}</button>`).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- RATINGS -->
+    <section class="section" id="calificaciones">
+      <div class="section-header">
+        <div class="overline">Calificaciones</div>
+        <h2>Profesionales que confían en nosotros</h2>
+        <p>Conoce las experiencias y calificaciones de nuestra comunidad de profesionales.</p>
+      </div>
+      <div class="ratings-grid" id="ratingsGrid">
+        ${ratings.map(r => `
+          <div class="rating-card">
+            <div class="rating-header">
+              <div class="rating-avatar">${r.initials}</div>
+              <div class="rating-user-info">
+                <h4>${r.name}</h4>
+                <span>${r.role}</span>
+              </div>
+              <div class="rating-percentage">
+                <div class="percent">${r.percentage}%</div>
+                <div class="label">Match</div>
+              </div>
+            </div>
+            ${renderStars(r.stars)}
+            <div class="rating-bar">
+              <div class="rating-bar-fill" data-width="${r.percentage}"></div>
+            </div>
+            <p class="rating-text">"${r.text}"</p>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+      <div class="section-header">
+        <div class="overline">Por Qué NextStepp</div>
+        <h2>Herramientas que impulsan tu carrera</h2>
+        <p>Todo lo que necesitas para encontrar el empleo perfecto en una sola plataforma.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">${icons.ai}</div>
+          <h3>IA Inteligente</h3>
+          <p>Asistente potenciado por Groq que analiza tu perfil y te recomienda las mejores oportunidades laborales.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">${icons.doc}</div>
+          <h3>Generador de CV</h3>
+          <p>Crea un CV profesional con nuestra herramienta de IA que destaca tus habilidades y experiencia.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">${icons.search}</div>
+          <h3>Búsqueda Avanzada</h3>
+          <p>Encuentra empleos por palabra clave, ubicación, empresa o habilidades específicas.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">${icons.star}</div>
+          <h3>Calificación Profesional</h3>
+          <p>Sistema de evaluación por porcentaje que muestra tu nivel de competencia y áreas de mejora.</p>
+        </div>
       </div>
     </section>
 
