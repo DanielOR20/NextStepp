@@ -448,6 +448,299 @@ function renderEmpresas() {
   `
 }
 
+const TASK_STORAGE_KEY = 'nextstepp_recruiter_tasks'
+
+const DEFAULT_ADMIN_TASKS = [
+  {
+    id: 'task-101',
+    title: 'Entrevista técnica con candidato Frontend Senior',
+    assignee: 'María García / TechNova Solutions',
+    priority: 'alta',
+    dueDate: '2026-09-01',
+    status: 'pendiente'
+  },
+  {
+    id: 'task-102',
+    title: 'Validar referencias laborales y antecedentes',
+    assignee: 'Carlos Hernández / DataMind Analytics',
+    priority: 'media',
+    dueDate: '2026-09-05',
+    status: 'pendiente'
+  },
+  {
+    id: 'task-103',
+    title: 'Revisión de CV y portafolio UX/UI en Figma',
+    assignee: 'Ana López / CreativeHub Digital',
+    priority: 'alta',
+    dueDate: '2026-08-30',
+    status: 'en_revision'
+  },
+  {
+    id: 'task-104',
+    title: 'Confirmar oferta económica y carta de oferta',
+    assignee: 'Roberto Martínez / CloudScale Inc.',
+    priority: 'media',
+    dueDate: '2026-08-28',
+    status: 'en_revision'
+  },
+  {
+    id: 'task-105',
+    title: 'Envío de paquete de bienvenida (Onboarding)',
+    assignee: 'Laura Sánchez / InnovateTech',
+    priority: 'baja',
+    dueDate: '2026-08-20',
+    status: 'completado'
+  }
+]
+
+function getAdminTasks() {
+  const saved = localStorage.getItem(TASK_STORAGE_KEY)
+  if (saved) {
+    try {
+      return JSON.parse(saved)
+    } catch (e) {
+      return [...DEFAULT_ADMIN_TASKS]
+    }
+  }
+  localStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(DEFAULT_ADMIN_TASKS))
+  return [...DEFAULT_ADMIN_TASKS]
+}
+
+function saveAdminTasks(tasks) {
+  localStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(tasks))
+}
+
+function renderTareas() {
+  const tasks = getAdminTasks()
+  const priorityLabels = { alta: '🔴 Alta', media: '🟡 Media', baja: '🟢 Baja' }
+
+  const renderColumnTasks = (status) => {
+    const list = tasks.filter(t => t.status === status)
+    if (list.length === 0) {
+      return `
+        <div class="column-empty">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span>Sin tareas pendientes</span>
+        </div>
+      `
+    }
+    return list.map(t => {
+      const isOverdue = new Date(t.dueDate) < new Date() && t.status !== 'completado'
+      return `
+        <article class="task-card" draggable="true" data-id="${t.id}" id="card-${t.id}">
+          <div class="task-card-header">
+            <h4 class="task-title">${t.title}</h4>
+            <button class="btn-delete-task" data-id="${t.id}" title="Eliminar tarea">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+          <div class="task-assignee">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>${t.assignee}</span>
+          </div>
+          <div class="task-footer">
+            <span class="priority-badge priority-${t.priority}">${priorityLabels[t.priority] || '🟡 Media'}</span>
+            <span class="task-due ${isOverdue ? 'due-soon' : ''}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              ${t.dueDate}
+            </span>
+          </div>
+        </article>
+      `
+    }).join('')
+  }
+
+  const countPending = tasks.filter(t => t.status === 'pendiente').length
+  const countReview = tasks.filter(t => t.status === 'en_revision').length
+  const countDone = tasks.filter(t => t.status === 'completado').length
+
+  return `
+    <header class="dashboard-header">
+      <div>
+        <h1>Tareas del Reclutador</h1>
+        <p>Tablero ágil Kanban para seguimiento de candidatos, entrevistas y ofertas</p>
+      </div>
+      <button class="btn btn-primary" id="btnOpenTaskModal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva Tarea
+      </button>
+    </header>
+
+    <div class="kanban-board">
+      <section class="kanban-column" data-status="pendiente">
+        <div class="column-header">
+          <div class="column-title-group">
+            <span class="status-indicator status-pendiente"></span>
+            <h3>Pendiente</h3>
+          </div>
+          <span class="task-count">${countPending}</span>
+        </div>
+        <div class="task-list" id="list-pendiente">${renderColumnTasks('pendiente')}</div>
+      </section>
+
+      <section class="kanban-column" data-status="en_revision">
+        <div class="column-header">
+          <div class="column-title-group">
+            <span class="status-indicator status-revision"></span>
+            <h3>En Revisión</h3>
+          </div>
+          <span class="task-count">${countReview}</span>
+        </div>
+        <div class="task-list" id="list-en_revision">${renderColumnTasks('en_revision')}</div>
+      </section>
+
+      <section class="kanban-column" data-status="completado">
+        <div class="column-header">
+          <div class="column-title-group">
+            <span class="status-indicator status-completado"></span>
+            <h3>Completado</h3>
+          </div>
+          <span class="task-count">${countDone}</span>
+        </div>
+        <div class="task-list" id="list-completado">${renderColumnTasks('completado')}</div>
+      </section>
+    </div>
+
+    <!-- Modal Crear Tarea -->
+    <div class="modal-backdrop" id="taskModalBackdrop">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <div class="modal-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </div>
+            <h3>Nueva Tarea del Reclutador</h3>
+          </div>
+          <button class="btn-close" id="btnCloseTaskModal">&times;</button>
+        </div>
+        <form id="taskForm" class="modal-form">
+          <div class="form-group">
+            <label class="form-label">Título de la Tarea *</label>
+            <input type="text" id="taskTitle" class="form-control" placeholder="Ej: Entrevista técnica Frontend" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Candidato / Empresa Asociada *</label>
+            <input type="text" id="taskAssignee" class="form-control" placeholder="Ej: Carlos Mendoza / TechNova" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nivel de Prioridad *</label>
+              <select id="taskPriority" class="form-control form-select" required>
+                <option value="alta">🔴 Alta (Urgente)</option>
+                <option value="media" selected>🟡 Media (Normal)</option>
+                <option value="baja">🟢 Baja (Planificada)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fecha Límite *</label>
+              <input type="date" id="taskDueDate" class="form-control" required />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" id="btnCancelTaskModal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Crear Tarea</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  `
+}
+
+function initAdminKanbanEvents() {
+  const modal = document.getElementById('taskModalBackdrop')
+  const btnOpen = document.getElementById('btnOpenTaskModal')
+  const btnClose = document.getElementById('btnCloseTaskModal')
+  const btnCancel = document.getElementById('btnCancelTaskModal')
+  const form = document.getElementById('taskForm')
+  const dueDate = document.getElementById('taskDueDate')
+
+  if (dueDate) {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    dueDate.value = tomorrow.toISOString().split('T')[0]
+  }
+
+  btnOpen?.addEventListener('click', () => { modal?.classList.add('active'); document.getElementById('taskTitle')?.focus() })
+  btnClose?.addEventListener('click', () => modal?.classList.remove('active'))
+  btnCancel?.addEventListener('click', () => modal?.classList.remove('active'))
+  modal?.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active') })
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const title = document.getElementById('taskTitle').value.trim()
+    const assignee = document.getElementById('taskAssignee').value.trim()
+    const priority = document.getElementById('taskPriority').value
+    const due = document.getElementById('taskDueDate').value
+
+    if (!title || !assignee || !due) return
+    const tasks = getAdminTasks()
+    tasks.unshift({
+      id: `task-${Date.now()}`,
+      title,
+      assignee,
+      priority,
+      dueDate: due,
+      status: 'pendiente'
+    })
+    saveAdminTasks(tasks)
+    modal.classList.remove('active')
+    reRender()
+  })
+
+  // Delete
+  document.querySelectorAll('.btn-delete-task').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      const id = btn.dataset.id
+      let tasks = getAdminTasks()
+      tasks = tasks.filter(t => String(t.id) !== String(id))
+      saveAdminTasks(tasks)
+      reRender()
+    })
+  })
+
+  // Drag & Drop
+  let draggedId = null
+  document.querySelectorAll('.task-card').forEach(card => {
+    card.addEventListener('dragstart', (e) => {
+      draggedId = card.dataset.id
+      card.classList.add('dragging')
+      e.dataTransfer.effectAllowed = 'move'
+      e.dataTransfer.setData('text/plain', draggedId)
+    })
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging')
+      document.querySelectorAll('.kanban-column').forEach(col => col.classList.remove('drag-over'))
+    })
+  })
+
+  document.querySelectorAll('.kanban-column').forEach(col => {
+    col.addEventListener('dragover', (e) => {
+      e.preventDefault()
+      e.dataTransfer.dropEffect = 'move'
+      col.classList.add('drag-over')
+    })
+    col.addEventListener('dragleave', (e) => {
+      if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over')
+    })
+    col.addEventListener('drop', (e) => {
+      e.preventDefault()
+      col.classList.remove('drag-over')
+      const targetStatus = col.dataset.status
+      const id = e.dataTransfer.getData('text/plain') || draggedId
+      if (id && targetStatus) {
+        const tasks = getAdminTasks()
+        const t = tasks.find(x => String(x.id) === String(id))
+        if (t && t.status !== targetStatus) {
+          t.status = targetStatus
+          saveAdminTasks(tasks)
+          reRender()
+        }
+      }
+    })
+  })
+}
+
 function renderPlaceholder(title, description, icon) {
   return `
     <header class="dashboard-header">
@@ -487,7 +780,7 @@ function reRender() {
       content = renderPlaceholder('Entrevistas / Notas', 'Programa entrevistas y registra notas de seguimiento.', SIDEBAR_ITEMS[4].icon)
       break
     case 'tareas':
-      content = renderPlaceholder('Tareas del Reclutador', 'Organiza y da seguimiento a las tareas del equipo.', SIDEBAR_ITEMS[5].icon)
+      content = renderTareas()
       break
   }
 
@@ -499,6 +792,9 @@ function reRender() {
   `
 
   bindEvents()
+  if (currentSection === 'tareas') {
+    initAdminKanbanEvents()
+  }
 }
 
 function bindEvents() {
@@ -572,3 +868,9 @@ export function renderAdminEmpresas() {
   currentSection = 'empresas'
   reRender()
 }
+
+export function renderAdminTareas() {
+  currentSection = 'tareas'
+  reRender()
+}
+
