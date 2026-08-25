@@ -26,6 +26,17 @@
   --radius-xl: 24px;
   --font: 'Inter', system-ui, -apple-system, sans-serif;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Splash Screen & Neon Tokens */
+  --neon-chameleon-1: #00ff87;
+  --neon-chameleon-2: #60efff;
+  --neon-chameleon-3: #10b981;
+  --neon-chameleon-glow: rgba(0, 255, 135, 0.55);
+  --gold-primary: #ffd700;
+  --gold-secondary: #f59e0b;
+  --gold-bright: #fff066;
+  --gold-glow: rgba(255, 215, 0, 0.55);
+  --splash-bg: #05070e;
 }
 
 *, *::before, *::after {
@@ -47,6 +58,356 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===================== APP CONTAINER VISIBILITY (REQUISITO 1) ===================== */
+#app {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.985);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  width: 100%;
+  min-height: 100vh;
+}
+
+#app.app-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* ===================== SPLASH SCREEN / DESBLOQUEO INTERACTIVO ===================== */
+.splash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--splash-bg);
+  background-image: 
+    radial-gradient(circle at 50% 45%, rgba(0, 255, 135, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 55% 55%, rgba(255, 215, 0, 0.07) 0%, transparent 45%),
+    radial-gradient(circle at center, #0b1120 0%, #030508 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.splash-overlay.unlocking {
+  pointer-events: none;
+  animation: splashDissolve 0.85s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.splash-overlay.hidden {
+  display: none !important;
+}
+
+.splash-bg-glow {
+  position: absolute;
+  width: 650px;
+  height: 650px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 255, 135, 0.16), rgba(255, 215, 0, 0.12), transparent 70%);
+  filter: blur(80px);
+  animation: ambientGlowPulse 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  user-select: none;
+}
+
+/* Contenedor del patrón de desbloqueo */
+.ns-loader {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  margin-bottom: 2.2rem;
+  perspective: 1000px;
+}
+
+/* Sólidos trazos anchos tipo neón con esquinas redondeadas */
+.loader-line {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 16px;
+  will-change: transform, box-shadow, filter;
+  transition: all 0.3s ease;
+}
+
+/* BLOQUE IZQUIERDO (.line-1): Verde Camaleón Exótico Vibrante */
+.loader-line.line-1 {
+  top: 6%;
+  left: 6%;
+  width: 68%;
+  height: 72%;
+  border: 12px solid #00ff87;
+  border-top-color: #60efff;
+  border-left-color: #00ff87;
+  border-bottom-color: #10b981;
+  border-right-color: #60efff;
+  box-shadow: 
+    0 0 25px var(--neon-chameleon-glow),
+    0 0 50px rgba(0, 255, 135, 0.35),
+    inset 0 0 15px rgba(96, 239, 255, 0.3);
+  animation: chameleonDraw 2.4s ease-in-out infinite, chameleonHueShift 5s ease-in-out infinite alternate;
+}
+
+/* BLOQUE DERECHO (.line-2): Dorado Oro Elegante y Brillante */
+.loader-line.line-2 {
+  bottom: 6%;
+  right: 6%;
+  width: 68%;
+  height: 72%;
+  border: 12px solid #ffd700;
+  border-top-color: #ffe259;
+  border-right-color: #ffd700;
+  border-bottom-color: #f59e0b;
+  border-left-color: #ffa751;
+  border-radius: 16px 6px 16px 16px;
+  box-shadow: 
+    0 0 25px var(--gold-glow),
+    0 0 50px rgba(255, 215, 0, 0.35),
+    inset 0 0 15px rgba(255, 226, 89, 0.3);
+  animation: goldDraw 2.4s ease-in-out 0.25s infinite, goldShimmer 4s ease-in-out infinite alternate;
+}
+
+/* Núcleo de energía central */
+.loader-core-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, rgba(96, 239, 255, 0.9) 35%, rgba(255, 215, 0, 0.7) 75%, transparent 100%);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.9), 0 0 50px #00ff87;
+  animation: corePulse 1.8s ease-in-out infinite alternate;
+}
+
+/* ANIMACIÓN DE CIERRE / EXPLOSIÓN CONTROLADA DE DESBLOQUEO */
+.splash-overlay.unlocking .ns-loader {
+  animation: unlockExplosion 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.splash-overlay.unlocking .splash-brand {
+  animation: brandUnlockFade 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* TEXTOS Y ESTADO DE SPLASH */
+.splash-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.splash-title {
+  font-family: var(--font);
+  font-size: 1.85rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.splash-title-accent {
+  background: linear-gradient(135deg, #00ff87 0%, #60efff 50%, #ffd700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.splash-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.splash-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ff87;
+  box-shadow: 0 0 10px #00ff87;
+  animation: indicatorBlink 1s ease-in-out infinite alternate;
+}
+
+.splash-text {
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin: 0;
+  min-height: 1.4rem;
+  transition: color 0.3s ease;
+}
+
+/* BARRA DE PROGRESO */
+.splash-progress {
+  width: 220px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.splash-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #00ff87, #60efff, #ffd700);
+  border-radius: 99px;
+  box-shadow: 0 0 14px rgba(0, 255, 135, 0.85);
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* KEYFRAMES DE ANIMACIONES DEL SPLASH */
+@keyframes chameleonHueShift {
+  0% {
+    filter: hue-rotate(0deg) drop-shadow(0 0 15px rgba(0, 255, 135, 0.5));
+  }
+  50% {
+    filter: hue-rotate(30deg) drop-shadow(0 0 28px rgba(96, 239, 255, 0.65));
+  }
+  100% {
+    filter: hue-rotate(-25deg) drop-shadow(0 0 22px rgba(16, 185, 129, 0.65));
+  }
+}
+
+@keyframes goldShimmer {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+  }
+  50% {
+    filter: brightness(1.25) drop-shadow(0 0 32px rgba(255, 235, 100, 0.75));
+  }
+  100% {
+    filter: brightness(1.05) drop-shadow(0 0 22px rgba(245, 158, 11, 0.65));
+  }
+}
+
+@keyframes chameleonDraw {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.88;
+  }
+  50% {
+    transform: translate(-4px, -4px) scale(1.03);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.88;
+  }
+}
+
+@keyframes goldDraw {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.88;
+  }
+  50% {
+    transform: translate(4px, 4px) scale(1.03);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.88;
+  }
+}
+
+@keyframes corePulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.25);
+    opacity: 1;
+  }
+}
+
+@keyframes ambientGlowPulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.18);
+    opacity: 0.8;
+  }
+}
+
+@keyframes indicatorBlink {
+  0% { opacity: 0.4; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes unlockExplosion {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(0.92) rotate(-3deg);
+    opacity: 1;
+    filter: brightness(1.8) drop-shadow(0 0 35px #ffffff);
+  }
+  60% {
+    transform: scale(2.6) rotate(6deg);
+    opacity: 0.85;
+    filter: brightness(2.5) drop-shadow(0 0 80px #00ff87);
+  }
+  100% {
+    transform: scale(4.8) rotate(12deg);
+    opacity: 0;
+    filter: blur(14px) brightness(3);
+  }
+}
+
+@keyframes brandUnlockFade {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(20px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes splashDissolve {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 /* ===================== ANIMATED BACKGROUND ===================== */

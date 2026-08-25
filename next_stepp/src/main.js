@@ -201,10 +201,10 @@ function render() {
         Conectamos talento con las mejores oportunidades laborales. IA potenciada para encontrar el empleo perfecto según tu perfil profesional.
       </p>
       <div class="hero-actions">
-        <button class="btn btn-primary btn-lg" onclick="scrollTo('#empleos')">
+        <button class="btn btn-primary btn-lg" onclick="scrollToSection('#empleos')">
           ${icons.briefcase} Explorar Empleos
         </button>
-        <button class="btn btn-outline btn-lg" onclick="scrollTo('#perfil')">
+        <button class="btn btn-outline btn-lg" onclick="scrollToSection('#perfil')">
           ${icons.doc} Crear Mi CV
         </button>
       </div>
@@ -414,7 +414,7 @@ function render() {
       <div class="cv-banner-inner">
         <h2>Genera tu CV Profesional con IA</h2>
         <p>Nuestra inteligencia artificial analizará tu perfil y creará un CV que destaque ante los reclutadores.</p>
-        <button class="btn btn-lg" onclick="scrollTo('#perfil')">
+        <button class="btn btn-lg" onclick="scrollToSection('#perfil')">
           ${icons.doc} Crear Mi CV Ahora
         </button>
       </div>
@@ -568,15 +568,16 @@ function animateRatingBars() {
         observer.unobserve(fill)
       }
     })
-  }, { threshold: 0.3 })
+  }, { threshold: 0.2 })
 
   document.querySelectorAll('.rating-bar-fill').forEach(bar => observer.observe(bar))
 }
 
-function scrollTo(selector) {
+function scrollToSection(selector) {
   const el = document.querySelector(selector)
   if (el) el.scrollIntoView({ behavior: 'smooth' })
 }
+window.scrollToSection = scrollToSection
 
 function setupEventListeners() {
   const navbar = document.getElementById('navbar')
@@ -769,6 +770,71 @@ function setupEventListeners() {
   }
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', render)
-render()
+// ===================== SPLASH SCREEN CONTROLLER =====================
+function initSplashScreen() {
+  const splashOverlay = document.getElementById('splash-screen')
+  const app = document.getElementById('app')
+  const statusText = document.getElementById('splashStatusText')
+  const progressFill = document.getElementById('splashProgressFill')
+
+  if (!splashOverlay) {
+    if (app) app.classList.add('app-visible')
+    return
+  }
+
+  // Secuencia dinámica de carga
+  setTimeout(() => {
+    if (progressFill) progressFill.style.width = '28%'
+  }, 150)
+
+  setTimeout(() => {
+    if (statusText) statusText.textContent = 'Sincronizando perfil inteligente...'
+    if (progressFill) progressFill.style.width = '58%'
+  }, 800)
+
+  setTimeout(() => {
+    if (statusText) statusText.textContent = 'Calibrando ofertas laborales...'
+    if (progressFill) progressFill.style.width = '88%'
+  }, 1650)
+
+  setTimeout(() => {
+    if (statusText) {
+      statusText.textContent = '¡Acceso concedido!'
+      statusText.style.color = '#00ff87'
+    }
+    if (progressFill) progressFill.style.width = '100%'
+  }, 2250)
+
+  // Desbloqueo creativo: Zoom-out / explosión controlada y revelación de la app (~2.7s)
+  setTimeout(() => {
+    // Activa la animación de dispersión neón
+    splashOverlay.classList.add('unlocking')
+
+    // Revela suavemente la aplicación principal de NextStepp
+    if (app) {
+      app.classList.add('app-visible')
+    }
+
+    // Inicializa la animación de barras tras hacerse visible
+    setTimeout(() => {
+      animateRatingBars()
+    }, 350)
+
+    // Remueve el splash overlay del render tree tras finalizar la transición
+    setTimeout(() => {
+      splashOverlay.classList.add('hidden')
+    }, 850)
+  }, 2700)
+}
+
+// Initialize Application
+function initApp() {
+  render()
+  initSplashScreen()
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp)
+} else {
+  initApp()
+}
