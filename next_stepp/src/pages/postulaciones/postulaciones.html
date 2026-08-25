@@ -13,7 +13,7 @@
 </head>
 <body>
 
-  <!-- ENCABEZADO INSTITUCIONAL / SISTEMA DE GESTIÓN -->
+  <!-- ENCABEZADO INSTITUCIONAL / SISTEMA DE GESTIÓN (AZDIGITAL STYLE) -->
   <header class="sys-header">
     <div class="sys-header-left">
       <div class="sys-logo">
@@ -26,7 +26,7 @@
     </div>
     <div class="sys-header-right">
       <div class="sys-dropdown">
-        <span>Bandeja de Postulaciones (<strong>30</strong>) ▼</span>
+        <span>Bandejas de Entrada (<strong>30</strong>) ▼</span>
       </div>
       <a href="/index.html#/" class="sys-link">Inicio</a>
       <span class="sys-sep">|</span>
@@ -34,11 +34,11 @@
     </div>
   </header>
 
-  <!-- BANNER TÍTULO PRINCIPAL AZUL -->
+  <!-- BANNER TÍTULO PRINCIPAL AZUL MARINO -->
   <div class="sys-title-banner">
     <div class="banner-inner">
       <h1 class="banner-heading">REGISTRO Y ADMINISTRACIÓN DE POSTULACIONES</h1>
-      <div class="banner-subheading">NextStepp: Sistema de Gestión de Talento y Empleabilidad</div>
+      <div class="banner-subheading">NextStepp: Sistema de Gestión Documental y Talento</div>
     </div>
   </div>
 
@@ -51,10 +51,10 @@
           <span>➕ Nueva Postulación</span>
         </button>
         <button type="button" class="btn-tool btn-tool-blue" id="btnToggleFilter">
-          <span>🔍 Filtrar Información ▼</span>
+          <span>filtrar información ▼</span>
         </button>
         <button type="button" class="btn-tool btn-tool-blue" id="btnShowAll">
-          <span>Mostrar Todos</span>
+          <span>mostrar todos</span>
         </button>
       </div>
 
@@ -95,7 +95,7 @@
       </div>
     </div>
 
-    <!-- BARRA DE PAGINACIÓN Y EXPORTACIÓN ESTILO AZDIGITAL -->
+    <!-- BARRA DE PAGINACIÓN Y EXPORTACIÓN ESTILO EXACTO AZDIGITAL -->
     <div class="pagination-bar">
       <div class="pag-left">
         <span class="pag-count" id="lblTotalRegistros">No. Registros: <strong>30</strong></span>
@@ -127,7 +127,7 @@
       <div>Consultando base de datos DummyJSON (/posts)...</div>
     </div>
 
-    <!-- TABLA DE REGISTROS GRID INSTITUCIONAL -->
+    <!-- TABLA GRID INSTITUCIONAL AZDIGITAL CON COLORES AZUL MARINO Y GRIS -->
     <div class="table-responsive-container" id="tableContainer">
       <table class="az-grid-table">
         <thead>
@@ -140,7 +140,7 @@
             <th class="th-body">Carta de Presentación / Notas del Perfil</th>
             <th class="th-tags">Habilidades (Tags)</th>
             <th class="th-status">Estado Proceso</th>
-            <th class="th-score">Reacciones / Rating</th>
+            <th class="th-score">Match / Rating</th>
           </tr>
         </thead>
         <tbody id="postsTableBody">
@@ -215,8 +215,19 @@
         </div>
 
         <div class="win-form-group">
+          <label for="editStatus">Estado del Proceso de Selección: <span class="req">*</span></label>
+          <select id="editStatus" class="sys-select" style="width: 100%; padding: 7px 10px;">
+            <option value="revision">● En Revisión</option>
+            <option value="entrevista">● En Entrevista</option>
+            <option value="aprobada">● Aprobada / Contratado</option>
+            <option value="pendiente">● Pendiente</option>
+            <option value="rechazada">● Rechazada / No seleccionado</option>
+          </select>
+        </div>
+
+        <div class="win-form-group">
           <label for="editBody">Carta de Presentación / Notas del Proceso: <span class="req">*</span></label>
-          <textarea id="editBody" class="sys-textarea" rows="5" required></textarea>
+          <textarea id="editBody" class="sys-textarea" rows="4" required></textarea>
         </div>
 
         <div class="modal-win-footer">

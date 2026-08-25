@@ -133,6 +133,28 @@ function adaptarPostulacionAEspanol(post) {
 }
 
 /* ========================================================
+   2b. ESTADO Y BADGES DE POSTULACIÓN
+   ======================================================== */
+function getPostStatus(post) {
+  if (post.estado) return post.estado;
+  const mod = post.id % 3;
+  if (mod === 0) return 'entrevista';
+  if (mod === 1) return 'revision';
+  return 'pendiente';
+}
+
+function renderStatusBadge(status) {
+  const badges = {
+    entrevista: '<span class="badge-status badge-entrevista">🟢 Entrevista</span>',
+    revision:   '<span class="badge-status badge-revision">🔵 En Revisión</span>',
+    pendiente:  '<span class="badge-status badge-pendiente">🟡 Pendiente</span>',
+    aceptado:   '<span class="badge-status badge-entrevista">✅ Aceptado</span>',
+    rechazado:  '<span class="badge-status badge-rechazado">❌ Rechazado</span>'
+  };
+  return badges[status] || badges.pendiente;
+}
+
+/* ========================================================
    3. CARGA Y RENDERIZADO DE LA TABLA (GET /posts)
    ======================================================== */
 async function loadPostulaciones() {
@@ -167,10 +189,9 @@ function getFilteredList() {
       (Array.isArray(post.tags) && post.tags.some(t => t.toLowerCase().includes(query)));
 
     let matchState = true;
-    const statusMod = post.id % 3;
-    if (state === 'entrevista') matchState = (statusMod === 0);
-    if (state === 'revision') matchState = (statusMod === 1);
-    if (state === 'pendiente') matchState = (statusMod === 2);
+    if (state !== 'all') {
+      matchState = (getPostStatus(post) === state);
+    }
 
     return matchQuery && matchState;
   });
@@ -214,16 +235,8 @@ function renderTable() {
     const row = document.createElement('tr');
     row.id = `row-post-${post.id}`;
 
-    // Estado institucional
-    let badgeHtml = '';
-    const statusMod = post.id % 3;
-    if (statusMod === 0) {
-      badgeHtml = `<span class="grid-badge badge-entrevista">Entrevista</span>`;
-    } else if (statusMod === 1) {
-      badgeHtml = `<span class="grid-badge badge-revision">En Revisión</span>`;
-    } else {
-      badgeHtml = `<span class="grid-badge badge-pendiente">Pendiente</span>`;
-    }
+    const currentStatus = getPostStatus(post);
+    const badgeHtml = renderStatusBadge(currentStatus);
 
     const tagsHtml = (post.tags && Array.isArray(post.tags))
       ? post.tags.map(t => `<span class="pill-tag">${escapeHTML(t)}</span>`).join('')
@@ -233,7 +246,7 @@ function renderTable() {
 
     row.innerHTML = `
       <td style="white-space: nowrap;">
-        <button class="btn-grid-edit btn-edit-row" data-id="${post.id}" title="Editar postulación">
+        <button class="btn-grid-edit btn-edit-row" data-id="${post.id}" title="Editar información y estado">
           📝 Editar
         </button>
         <button class="btn-grid-delete btn-del-row" data-id="${post.id}" title="Eliminar registro">
@@ -243,21 +256,21 @@ function renderTable() {
       <td style="text-align: center;">
         <input type="checkbox" class="post-row-check" value="${post.id}">
       </td>
-      <td style="font-weight: 700; color: #104e8b;">${post.id}</td>
-      <td style="font-weight: 600;">${post.userId || 1}</td>
-      <td style="font-weight: 700; color: #1a365d;">
-        <div>${escapeHTML(post.title)}</div>
-        <div style="font-size: 11px; color: #666; font-weight: 400;">👤 ${escapeHTML(candidateName)}</div>
+      <td style="font-weight: 700; color: var(--accent-light);">${post.id}</td>
+      <td style="font-weight: 600; color: #fff;">${post.userId || 1}</td>
+      <td>
+        <div style="font-weight: 700; color: #ffffff;">${escapeHTML(post.title)}</div>
+        <div style="font-size: 0.75rem; color: var(--sys-text-muted); margin-top: 2px;">👤 ${escapeHTML(candidateName)}</div>
       </td>
-      <td style="color: #333; max-width: 320px;">
+      <td style="color: var(--sys-text-muted); max-width: 320px;">
         <div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="${escapeHTML(post.body)}">
           ${escapeHTML(post.body)}
         </div>
       </td>
       <td>${tagsHtml}</td>
       <td>${badgeHtml}</td>
-      <td style="text-align: center; font-weight: 600; color: #104e8b;">
-        ⭐ ${post.reactions?.likes || post.views || 90}%
+      <td style="text-align: center; font-weight: 700; color: var(--sys-success);">
+        ${post.reactions?.likes || post.views || 92}%
       </td>
     `;
 
@@ -383,7 +396,15 @@ btnExecAction.addEventListener('click', () => {
       showToast('Acción Completada', `Se eliminaron ${selected.length} registros del sistema.`, 'success');
     }
   } else {
-    showToast('Acción Masiva', `Se actualizó el estado de ${selected.length} postulaciones correctamente.`, 'success');
+    // Actualizar estado masivo
+    postulaciones.forEach(p => {
+      if (selected.includes(String(p.id))) {
+        p.estado = action;
+        p.esModificado = true;
+      }
+    });
+    renderTable();
+    showToast('Acción Masiva', `Se actualizó el estado a "${action.toUpperCase()}" en ${selected.length} postulaciones.`, 'success');
   }
 });
 
@@ -419,6 +440,7 @@ formCreate.addEventListener('submit', async (e) => {
   try {
     const newPost = await createPostulacion({ userId, title, body, tags });
     newPost.candidateName = candidateName;
+    newPost.estado = 'revision';
     newPost.esModificado = true;
 
     postulaciones.unshift(newPost);
@@ -437,12 +459,18 @@ formCreate.addEventListener('submit', async (e) => {
 });
 
 /* ========================================================
-   8. EDITAR REGISTRO - PATCH (/posts/{id})
+   8. EDITAR REGISTRO Y ESTADO - PATCH (/posts/{id})
    ======================================================== */
 function openEditModal(post) {
   editPostId.value = post.id;
   editTitle.value = post.title;
   editBody.value = post.body;
+  
+  const editStatusSelect = document.getElementById('editStatus');
+  if (editStatusSelect) {
+    editStatusSelect.value = getPostStatus(post);
+  }
+
   editModal.classList.add('active');
 }
 
@@ -458,6 +486,7 @@ formEdit.addEventListener('submit', async (e) => {
   const id = editPostId.value;
   const title = editTitle.value;
   const body = editBody.value;
+  const estado = document.getElementById('editStatus')?.value || 'revision';
 
   const submitBtn = document.getElementById('btnSubmitEdit');
   submitBtn.disabled = true;
@@ -467,11 +496,18 @@ formEdit.addEventListener('submit', async (e) => {
     const updated = await updatePostulacion(id, { title, body });
     const index = postulaciones.findIndex(p => String(p.id) === String(id));
     if (index !== -1) {
-      postulaciones[index] = { ...postulaciones[index], ...updated, title, body, esModificado: true };
+      postulaciones[index] = { 
+        ...postulaciones[index], 
+        ...updated, 
+        title, 
+        body, 
+        estado, 
+        esModificado: true 
+      };
     }
 
     renderTable();
-    showToast('Registro Modificado', `Los datos de la postulación #${id} fueron actualizados (PATCH).`, 'success');
+    showToast('Registro Modificado', `Los datos y el estado de la postulación #${id} fueron actualizados (PATCH).`, 'success');
     closeEditModal();
   } catch (error) {
     showToast('Error al Modificar', error.message, 'error');
@@ -517,4 +553,15 @@ window.addEventListener('click', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadPostulaciones();
+
+  // Verificar si viene con parámetro de vacante desde la página de empleos
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramTitle = urlParams.get('title');
+  if (paramTitle) {
+    openCreateModal();
+    const createTitleInput = document.getElementById('createTitle');
+    if (createTitleInput) {
+      createTitleInput.value = paramTitle;
+    }
+  }
 });

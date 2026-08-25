@@ -164,20 +164,42 @@ export function setupLoginModal() {
     loginSubmit.style.opacity = '0.7'
     loginSubmit.disabled = true
 
-    setTimeout(() => {
-      loginSubmit.textContent = '¡Bienvenido!'
-      loginSubmit.style.background = 'linear-gradient(135deg, #10b981, #06b6d4)'
-      loginSubmit.style.opacity = '1'
+    // Intentar inicio de sesión con el almacén central auth.js / store.js
+    import('./auth.js').then(({ login }) => {
+      const res = login(email, password)
+      if (res.success) {
+        loginSubmit.textContent = '¡Bienvenido!'
+        loginSubmit.style.background = 'linear-gradient(135deg, #10b981, #06b6d4)'
+        loginSubmit.style.opacity = '1'
 
-      setTimeout(() => {
-        closeLoginModal()
-        loginSubmit.textContent = 'Iniciar Sesión'
-        loginSubmit.style.background = ''
-        loginSubmit.disabled = false
-        loginForm.reset()
-        showToast('¡Sesión iniciada! Bienvenido a NextStepp')
-      }, 1200)
-    }, 1500)
+        setTimeout(() => {
+          closeLoginModal()
+          loginSubmit.textContent = 'Iniciar Sesión'
+          loginSubmit.style.background = ''
+          loginSubmit.disabled = false
+          loginForm.reset()
+          
+          if (res.user.role === 'admin') {
+            window.location.href = 'index.html#/admin/dashboard'
+          } else {
+            window.location.href = 'index.html#/empresa/dashboard'
+          }
+        }, 800)
+      } else {
+        loginSubmit.textContent = 'Credenciales Incorrectas'
+        loginSubmit.style.background = 'linear-gradient(135deg, #ef4444, #f97316)'
+        loginSubmit.style.opacity = '1'
+        setTimeout(() => {
+          loginSubmit.textContent = 'Iniciar Sesión'
+          loginSubmit.style.background = ''
+          loginSubmit.disabled = false
+        }, 2000)
+      }
+    }).catch(() => {
+      // Fallback
+      closeLoginModal()
+      window.location.href = 'index.html#/login'
+    })
   })
 
   function showToast(message) {

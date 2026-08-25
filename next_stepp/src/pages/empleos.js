@@ -130,9 +130,12 @@ app.innerHTML = `
           </div>
           <div class="job-card-footer">
             <span class="job-salary">${job.salary}</span>
-            <span class="job-location">
-              ${icons.location} ${job.location}
-            </span>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span class="job-location">${icons.location} ${job.location}</span>
+              <a href="/src/pages/postulaciones/postulaciones.html?jobId=${job.id}&title=${encodeURIComponent(job.title)}" class="btn btn-primary btn-sm" style="text-decoration:none; padding: 4px 10px; font-size: 0.75rem;">
+                Postularme ↗
+              </a>
+            </div>
           </div>
         </div>
       `).join('')}
