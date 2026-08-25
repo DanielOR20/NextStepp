@@ -408,7 +408,7 @@ body {
 
 /* ===================== SECTION TITLES ===================== */
 .section {
-  padding: 5rem 2rem;
+  padding: 0 2rem 5rem;
   max-width: 1280px;
   margin: 0 auto;
 }
@@ -582,6 +582,306 @@ body {
   gap: 4px;
   color: var(--text-muted);
   font-size: 0.85rem;
+}
+
+/* ===================== SEARCH RESULTS COUNTER ===================== */
+.search-results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 0 0.25rem;
+}
+
+.search-results-count {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.search-results-count strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.search-clear-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font);
+  display: none;
+}
+
+.search-clear-btn.visible {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-clear-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+  grid-column: 1 / -1;
+}
+
+.no-results h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.no-results p {
+  font-size: 0.9rem;
+}
+
+/* ===================== JOB DETAIL MODAL ===================== */
+.job-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  padding: 1rem;
+}
+
+.job-modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.job-modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2.5rem;
+  position: relative;
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+}
+
+.job-modal-overlay.open .job-modal {
+  transform: translateY(0) scale(1);
+}
+
+.job-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.75rem;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+.job-modal-close:hover {
+  color: var(--text-primary);
+  background: var(--glass);
+}
+
+.job-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.job-modal-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.job-modal-title-area {
+  flex: 1;
+}
+
+.job-modal-title-area h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.job-modal-title-area .company-name {
+  color: var(--accent-light);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+.job-modal-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.job-modal-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.job-modal-meta-item svg {
+  flex-shrink: 0;
+}
+
+.job-modal-body {
+  margin-bottom: 1.5rem;
+}
+
+.job-modal-body h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.job-modal-body p {
+  color: var(--text-secondary);
+  font-size: 0.925rem;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+.job-modal-body ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.job-modal-body ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.job-modal-body ul li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.job-modal-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.job-modal-tag {
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--accent-light);
+  font-size: 0.825rem;
+  font-weight: 500;
+}
+
+.job-modal-footer {
+  display: flex;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.job-modal-footer .btn {
+  flex: 1;
+}
+
+.job-modal-salary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 1rem 1.25rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+}
+
+.job-modal-salary .salary-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.job-modal-salary .salary-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--success);
+}
+
+.job-modal-salary .salary-period {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@keyframes jobModalFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ===================== FEATURES ===================== */
