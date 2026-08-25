@@ -8,6 +8,7 @@ import { renderRegister } from './pages/auth/register.js'
 import { renderAdminDashboard, renderAdminEmpresas, renderAdminVacantes } from './pages/admin/dashboard.js'
 import { renderEmpresaDashboard } from './pages/client/empresas-clientes.js'
 
+// Definición de Rutas de la Aplicación
 addRoute('/', renderLanding)
 addRoute('/login', renderLogin)
 addRoute('/register', renderRegister)
@@ -16,4 +17,5 @@ addRoute('/admin/empresas', renderAdminEmpresas)
 addRoute('/admin/vacantes', renderAdminVacantes)
 addRoute('/empresa/dashboard', renderEmpresaDashboard)
 
+// Inicializar Enrutador
 initRouter()
