@@ -1,11 +1,11 @@
-import { getUsers } from './store.js'
+import { getUsers } from './store.service.js'
 
 let currentUser = null
 
 export function login(email, password) {
   const users = getUsers()
   const user = users.find(
-    (u) => u.email === email && u.password === password
+    (u) => u.email === email && u.password === password,
   )
   if (!user) return { success: false, error: 'Credenciales incorrectas' }
   const { password: _, ...safe } = user

@@ -1,58 +1,17 @@
-import { getCurrentUser, logout } from '../../auth.js'
-import { navigate } from '../../router.js'
+import { getCurrentUser, logout } from '../../services/auth.service.js'
+import { navigate } from '../../router/router.js'
 import {
   getCompanies,
   getVacancies,
   updateCompany,
   updateVacancy,
   getCompanyById,
-} from '../../store.js'
-import { classifyCompany, classifyVacancy } from '../../ai-classifier.js'
-
-const SIDEBAR_ITEMS = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
-  },
-  {
-    id: 'vacantes',
-    label: 'Vacantes',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
-  },
-  {
-    id: 'empresas',
-    label: 'Empresas Clientes',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-  },
-  {
-    id: 'postulaciones',
-    label: 'Postulaciones',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
-  },
-  {
-    id: 'entrevistas',
-    label: 'Entrevistas / Notas',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
-  },
-  {
-    id: 'tareas',
-    label: 'Tareas del Reclutador',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
-  },
-]
+} from '../../services/store.service.js'
+import { classifyCompany, classifyVacancy } from '../../services/ai.service.js'
+import { SIDEBAR_ITEMS } from '../../config/constants.js'
+import { statusBadge } from '../../utils/helpers.js'
 
 let currentSection = 'dashboard'
-
-function statusBadge(status) {
-  const map = {
-    pending: { label: 'En Revisión', cls: 'status-pending' },
-    approved: { label: 'Aprobada', cls: 'status-approved' },
-    rejected: { label: 'Rechazada', cls: 'status-rejected' },
-  }
-  const s = map[status] || map.pending
-  return `<span class="status-badge ${s.cls}">${s.label}</span>`
-}
 
 function renderSidebar(user) {
   return `
@@ -258,10 +217,10 @@ function renderVacantes() {
                   </div>
                   <span class="ai-score-text">${check.score}% — ${check.approved ? 'Cumple requisitos' : 'No cumple requisitos mínimos'}</span>
                   <div class="check-grid compact">
-                    ${check.results.map((r) => `
+                    ${check.checks.map((r) => `
                       <div class="check-item ${r.passed ? 'passed' : 'failed'}">
                         <span class="check-icon">${r.passed ? '✓' : '✗'}</span>
-                        <span>${r.label}</span>
+                        <span>${r.rule}</span>
                       </div>
                     `).join('')}
                   </div>
@@ -323,25 +282,25 @@ function renderVacantes() {
                 <div class="ai-report">
                   <h4>Clasificación IA — Reglas de Contenido</h4>
                   <div class="ai-score-bar">
-                    <div class="ai-score-fill ${aiResult.ruleScore >= 70 ? 'good' : 'bad'}" style="width: ${aiResult.ruleScore}%"></div>
+                    <div class="ai-score-fill ${aiResult.finalScore >= 70 ? 'good' : 'bad'}" style="width: ${aiResult.finalScore}%"></div>
                   </div>
                   <div class="check-grid compact">
-                    ${aiResult.ruleResults.map((r) => `
+                    ${aiResult.checks.map((r) => `
                       <div class="check-item ${r.passed ? 'passed' : 'failed'}">
                         <span class="check-icon">${r.passed ? '✓' : '✗'}</span>
-                        <span>${r.label}</span>
+                        <span>${r.rule}</span>
                       </div>
                     `).join('')}
                   </div>
                 </div>
                 <div class="ai-report security">
                   <h4>Análisis de Seguridad</h4>
-                  ${aiResult.flags.length === 0 ? '<p class="safe-text">✓ No se detectaron alertas de seguridad</p>' : `
+                  ${aiResult.security.flags.length === 0 ? '<p class="safe-text">✓ No se detectaron alertas de seguridad</p>' : `
                     <div class="security-flags">
-                      ${aiResult.flags.map((f) => `
+                      ${aiResult.security.flags.map((f) => `
                         <div class="flag-item ${f.severity}">
                           <span class="flag-severity">${f.severity === 'critical' ? 'CRÍTICO' : 'ALTO'}</span>
-                          <span>${f.label}</span>
+                          <span>${f.detail}</span>
                         </div>
                       `).join('')}
                     </div>
@@ -367,27 +326,6 @@ function renderVacantes() {
             </div>
           `
         }).join('')}
-      </div>
-    </div>
-
-    <div class="admin-section">
-      <h2>Todas las Empresas (${companies.length})</h2>
-      <div class="client-table-container">
-        <table class="client-table">
-          <thead>
-            <tr><th>Empresa</th><th>Contacto</th><th>Email</th><th>Estado</th></tr>
-          </thead>
-          <tbody>
-            ${companies.map((c) => `
-              <tr>
-                <td><strong>${c.companyName}</strong></td>
-                <td>${c.representative}</td>
-                <td>${c.email}</td>
-                <td>${statusBadge(c.companyStatus)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
       </div>
     </div>
 
@@ -430,7 +368,7 @@ function renderEmpresas() {
     <div class="client-table-container">
       <table class="client-table">
         <thead>
-          <tr><th>Empresa</th><th>Nombre Legal</th><th>RFC</th><th>Contacto</th><th>Estado</th></tr>
+          <tr><th>Empresa</th><th>Nombre Legal</th><th>RFC</th><th>Contacto</th><th>Email</th><th>Estado</th></tr>
         </thead>
         <tbody>
           ${companies.map((c) => `
@@ -439,6 +377,7 @@ function renderEmpresas() {
               <td>${c.legalName}</td>
               <td>${c.taxId}</td>
               <td>${c.representative}</td>
+              <td>${c.email}</td>
               <td>${statusBadge(c.companyStatus)}</td>
             </tr>
           `).join('')}
@@ -537,22 +476,14 @@ function bindEvents() {
 
   document.querySelectorAll('.approve-vacancy').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const id = parseInt(btn.dataset.id)
-      const v = getVacancies().find((x) => x.id === id)
-      const company = getCompanyById(v?.companyId)
-      const aiResult = v ? classifyVacancy(v, company) : null
-      updateVacancy(id, { status: 'approved', aiScore: aiResult?.finalScore ?? 0 })
+      updateVacancy(parseInt(btn.dataset.id), { status: 'approved' })
       reRender()
     })
   })
 
   document.querySelectorAll('.reject-vacancy').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const id = parseInt(btn.dataset.id)
-      const v = getVacancies().find((x) => x.id === id)
-      const company = getCompanyById(v?.companyId)
-      const aiResult = v ? classifyVacancy(v, company) : null
-      updateVacancy(id, { status: 'rejected', aiScore: aiResult?.finalScore ?? 0 })
+      updateVacancy(parseInt(btn.dataset.id), { status: 'rejected' })
       reRender()
     })
   })

@@ -1,21 +1,8 @@
-import { getCurrentUser, logout } from '../../auth.js'
-import { navigate } from '../../router.js'
-import { getVacanciesByCompany, addVacancy, getCompanyById } from '../../store.js'
-import { classifyCompany } from '../../ai-classifier.js'
-
-function statusBadge(status) {
-  const map = {
-    pending: { label: 'En Revisión', cls: 'status-pending' },
-    approved: { label: 'Aprobada', cls: 'status-approved' },
-    rejected: { label: 'Rechazada', cls: 'status-rejected' },
-  }
-  const s = map[status] || map.pending
-  return `<span class="status-badge ${s.cls}">${s.label}</span>`
-}
-
-function modalityLabel(m) {
-  return { presencial: 'Presencial', remoto: 'Remoto', híbrido: 'Híbrido' }[m] || m
-}
+import { getCurrentUser, logout } from '../../services/auth.service.js'
+import { navigate } from '../../router/router.js'
+import { getVacanciesByCompany, addVacancy, getCompanyById } from '../../services/store.service.js'
+import { classifyCompany } from '../../services/ai.service.js'
+import { statusBadge, modalityLabel } from '../../utils/helpers.js'
 
 export function renderEmpresaDashboard() {
   const user = getCurrentUser()
@@ -82,10 +69,10 @@ export function renderEmpresaDashboard() {
         <div class="company-check-details">
           <h3>Estado de Verificación</h3>
           <div class="check-grid">
-            ${companyCheck.results.map((r) => `
+            ${companyCheck.checks.map((r) => `
               <div class="check-item ${r.passed ? 'passed' : 'failed'}">
                 <span class="check-icon">${r.passed ? '✓' : '✗'}</span>
-                <span>${r.label}</span>
+                <span>${r.rule}</span>
               </div>
             `).join('')}
           </div>
@@ -95,35 +82,12 @@ export function renderEmpresaDashboard() {
           </div>
         </div>
 
-        <div class="client-stats-row">
-          <div class="stat-card">
-            <span class="stat-card-number">${vacancies.length}</span>
-            <span class="stat-card-label">Total Vacantes</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-card-number">${vacancies.filter((v) => v.status === 'approved').length}</span>
-            <span class="stat-card-label">Publicadas</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-card-number">${vacancies.filter((v) => v.status === 'pending').length}</span>
-            <span class="stat-card-label">En Revisión</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-card-number">${vacancies.filter((v) => v.status === 'rejected').length}</span>
-            <span class="stat-card-label">Rechazadas</span>
-          </div>
-        </div>
-
         ${company.companyStatus === 'approved' ? `
           <div class="section-actions">
-            <h2>Mis Vacantes</h2>
-            <button class="btn btn-primary" id="showVacancyForm">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Nueva Vacante
-            </button>
+            <h2>Publicar Vacante</h2>
           </div>
 
-          <div class="vacancy-form-wrapper hidden" id="vacancyFormWrapper">
+          <div class="vacancy-form-wrapper">
             <form class="vacancy-form" id="vacancyForm">
               <h3>Publicar Nueva Vacante</h3>
               <div class="form-row">
@@ -191,7 +155,6 @@ export function renderEmpresaDashboard() {
                 </div>
               </div>
               <div class="form-actions">
-                <button type="button" class="btn btn-ghost" id="cancelVacancyForm">Cancelar</button>
                 <button type="submit" class="btn btn-primary">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                   Enviar para Revisión
@@ -241,20 +204,7 @@ export function renderEmpresaDashboard() {
   })
 
   if (company.companyStatus === 'approved') {
-    const formWrapper = document.getElementById('vacancyFormWrapper')
-    const showBtn = document.getElementById('showVacancyForm')
-    const cancelBtn = document.getElementById('cancelVacancyForm')
     const form = document.getElementById('vacancyForm')
-
-    showBtn.addEventListener('click', () => {
-      formWrapper.classList.toggle('hidden')
-      showBtn.textContent = formWrapper.classList.contains('hidden') ? '+ Nueva Vacante' : 'Cancelar'
-    })
-
-    cancelBtn.addEventListener('click', () => {
-      formWrapper.classList.add('hidden')
-      showBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nueva Vacante'
-    })
 
     form.addEventListener('submit', (e) => {
       e.preventDefault()
@@ -275,7 +225,7 @@ export function renderEmpresaDashboard() {
       }
 
       addVacancy(vacancy)
-      navigate('/empresa/dashboard')
+      renderEmpresaDashboard()
     })
   }
 }

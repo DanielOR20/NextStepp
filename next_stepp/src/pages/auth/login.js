@@ -1,5 +1,5 @@
-import { login } from '../auth.js'
-import { navigate } from '../router.js'
+import { login } from '../../services/auth.service.js'
+import { navigate } from '../../router/router.js'
 
 export function renderLogin() {
   const app = document.getElementById('app')
@@ -53,6 +53,7 @@ export function renderLogin() {
               Iniciar Sesión
             </button>
             <div class="auth-error" id="authError"></div>
+            <p class="auth-link">¿No tienes cuenta? <a href="#/register">Registrar Empresa</a></p>
           </form>
         </div>
       </div>

@@ -117,6 +117,23 @@
   opacity: 1;
 }
 
+.auth-link {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  color: var(--text-secondary);
+}
+
+.auth-link a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
 /* ===================== DASHBOARD LAYOUT ===================== */
 .dashboard-layout {
   display: flex;
