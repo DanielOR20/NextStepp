@@ -1,0 +1,251 @@
+{
+  "version": 3,
+  "users": [
+    {
+      "id": 1,
+      "email": "admin",
+      "password": "1234",
+      "name": "Administrador General",
+      "role": "admin"
+    },
+    {
+      "id": 2,
+      "email": "empresas",
+      "password": "1234",
+      "name": "Carlos Mendoza",
+      "role": "empresa_cliente",
+      "companyName": "TechNova Solutions",
+      "legalName": "TechNova Solutions S.A. de C.V.",
+      "taxId": "RFC-TN202501ABC",
+      "address": "Av. Insurgentes Sur 1234, CDMX",
+      "phone": "+52 55 1234 5678",
+      "website": "https://technova-solutions.com",
+      "representative": "Ing. Carlos Mendoza, Director General",
+      "companyStatus": "approved"
+    },
+    {
+      "id": 3,
+      "email": "greensoft@empresa.com",
+      "password": "Green#2026",
+      "name": "Laura Torres",
+      "role": "empresa_cliente",
+      "companyName": "GreenSoft México",
+      "legalName": "GreenSoft México S. de R.L.",
+      "taxId": "RFC-GS202405XYZ",
+      "address": "Calle Reforma 567, Guadalajara, JAL",
+      "phone": "+52 33 9876 5432",
+      "website": "https://greensoft.mx",
+      "representative": "Mtra. Laura Torres, CEO",
+      "companyStatus": "pending"
+    },
+    {
+      "id": 4,
+      "email": "cloudnet@empresa.com",
+      "password": "Cloud#2026",
+      "name": "Roberto Álvarez",
+      "role": "empresa_cliente",
+      "companyName": "CloudNet Systems",
+      "legalName": "CloudNet Systems GmbH (Sucursal MX)",
+      "taxId": "RFC-CN202308DEF",
+      "address": "Blvd. Díaz Ordaz 891, Monterrey, NL",
+      "phone": "+52 81 5555 1234",
+      "website": "https://cloudnet-systems.com",
+      "representative": "Ing. Roberto Álvarez, CTO",
+      "companyStatus": "rejected"
+    }
+  ],
+  "vacancies": [
+    {
+      "id": 1,
+      "companyId": 2,
+      "positionName": "Desarrollador Full Stack Senior",
+      "description": "Buscamos un desarrollador full stack con experiencia en React, Node.js y PostgreSQL para liderar proyectos de innovación tecnológica.",
+      "requirements": "5+ años de experiencia, dominio de React, Node.js, bases de datos relacionales",
+      "experience": "5+ años",
+      "education": "Ingeniería en Sistemas o afín",
+      "location": "Ciudad de México",
+      "modality": "híbrido",
+      "contractType": "Tiempo completo",
+      "workSchedule": "Lunes a Viernes 9:00 - 18:00",
+      "salaryRange": "$45,000 - $65,000 MXN mensuales",
+      "deadline": "2026-09-30",
+      "status": "approved",
+      "aiScore": 95,
+      "aiFlags": [],
+      "publishedAt": "2026-08-20"
+    },
+    {
+      "id": 2,
+      "companyId": 2,
+      "positionName": "Diseñador UX/UI",
+      "description": "Creamos interfaces intuitivas y visualmente impactantes para productos digitales de alta demanda.",
+      "requirements": "Experiencia en Figma, prototipado, design systems",
+      "experience": "3+ años",
+      "education": "Diseño Gráfico o afín",
+      "location": "Remoto",
+      "modality": "remoto",
+      "contractType": "Tiempo completo",
+      "workSchedule": "Flexible",
+      "salaryRange": "$30,000 - $45,000 MXN mensuales",
+      "deadline": "2026-10-15",
+      "status": "pending",
+      "aiScore": null,
+      "aiFlags": [],
+      "publishedAt": "2026-08-24"
+    }
+  ],
+  "jobOffers": [
+    {
+      "id": 1,
+      "title": "Desarrollador Full Stack Senior",
+      "company": "TechNova Solutions",
+      "logo": "TN",
+      "logoColor": "#6366f1",
+      "description": "Buscamos un desarrollador full stack con experiencia en React, Node.js y bases de datos PostgreSQL para liderar proyectos de innovación tecnológica.",
+      "tags": ["React", "Node.js", "PostgreSQL", "TypeScript"],
+      "salary": "$3,200 - $4,800",
+      "location": "Ciudad de México, MX",
+      "badge": "new",
+      "remote": true
+    },
+    {
+      "id": 2,
+      "title": "UX/UI Designer",
+      "company": "CreativeHub Digital",
+      "logo": "CH",
+      "logoColor": "#06b6d4",
+      "description": "Diseñador de experiencias de usuario con enfoque en productos digitales. Crearemos interfaces intuitivas y visualmente impactantes.",
+      "tags": ["Figma", "UI/UX", "Prototipado", "Design System"],
+      "salary": "$2,400 - $3,600",
+      "location": "Remoto",
+      "badge": "urgent",
+      "remote": true
+    },
+    {
+      "id": 3,
+      "title": "Data Scientist",
+      "company": "DataMind Analytics",
+      "logo": "DM",
+      "logoColor": "#8b5cf6",
+      "description": "Únete a nuestro equipo de ciencia de datos para construir modelos de machine learning que transformen la toma de decisiones empresariales.",
+      "tags": ["Python", "ML", "TensorFlow", "SQL"],
+      "salary": "$3,800 - $5,500",
+      "location": "Guadalajara, MX",
+      "badge": "new",
+      "remote": false
+    },
+    {
+      "id": 4,
+      "title": "DevOps Engineer",
+      "company": "CloudScale Inc.",
+      "logo": "CS",
+      "logoColor": "#10b981",
+      "description": "Ingeniero DevOps para automatizar y optimizar nuestra infraestructura cloud. Experiencia con Kubernetes y CI/CD requerida.",
+      "tags": ["AWS", "Kubernetes", "Docker", "Terraform"],
+      "salary": "$3,500 - $5,000",
+      "location": "Monterrey, MX",
+      "badge": "urgent",
+      "remote": true
+    },
+    {
+      "id": 5,
+      "title": "Product Manager",
+      "company": "InnovateTech",
+      "logo": "IT",
+      "logoColor": "#f59e0b",
+      "description": "Lidera el ciclo de vida de productos digitales desde la concepción hasta el lanzamiento. Trabaja con equipos ágiles.",
+      "tags": ["Agile", "Scrum", "Roadmap", "Analytics"],
+      "salary": "$3,000 - $4,500",
+      "location": "Ciudad de México, MX",
+      "badge": "new",
+      "remote": false
+    },
+    {
+      "id": 6,
+      "title": "Mobile Developer",
+      "company": "AppForge Labs",
+      "logo": "AF",
+      "logoColor": "#ec4899",
+      "description": "Desarrolla aplicaciones móviles multiplataforma con React Native. Experiencia en publicación en App Store y Google Play.",
+      "tags": ["React Native", "iOS", "Android", "Firebase"],
+      "salary": "$2,800 - $4,200",
+      "location": "Remoto",
+      "badge": "new",
+      "remote": true
+    }
+  ],
+  "ratings": [
+    {
+      "id": 1,
+      "name": "María García",
+      "initials": "MG",
+      "role": "Frontend Developer",
+      "percentage": 92,
+      "stars": 5,
+      "text": "Excelente plataforma. Encontré mi empleo ideal en menos de 2 semanas. El sistema de perfil profesional es muy completo."
+    },
+    {
+      "id": 2,
+      "name": "Carlos Hernández",
+      "initials": "CH",
+      "role": "Data Analyst",
+      "percentage": 87,
+      "stars": 4,
+      "text": "La IA me ayudó a mejorar mi CV significativamente. Las ofertas que recibo son muy relevantes a mi perfil."
+    },
+    {
+      "id": 3,
+      "name": "Ana López",
+      "initials": "AL",
+      "role": "UX Designer",
+      "percentage": 95,
+      "stars": 5,
+      "text": "Plataforma innovadora. El proceso de registro es sencillo y las recomendaciones de empleo son precisas."
+    },
+    {
+      "id": 4,
+      "name": "Roberto Martínez",
+      "initials": "RM",
+      "role": "DevOps Engineer",
+      "percentage": 89,
+      "stars": 4,
+      "text": "Muy buena experiencia. El buscador de empleos por palabra clave encuentra exactamente lo que busco."
+    },
+    {
+      "id": 5,
+      "name": "Laura Sánchez",
+      "initials": "LS",
+      "role": "Product Manager",
+      "percentage": 94,
+      "stars": 5,
+      "text": "El generador de CV con IA es increíble. Ahorré muchísimo tiempo y el resultado es profesional."
+    },
+    {
+      "id": 6,
+      "name": "Diego Torres",
+      "initials": "DT",
+      "role": "Full Stack Developer",
+      "percentage": 91,
+      "stars": 5,
+      "text": "Las calificaciones por porcentaje me dieron una visión clara de mis áreas de mejora. Totalmente recomendado."
+    }
+  ],
+  "suggestedTags": [
+    "Desarrollador", "React", "Python", "Remoto", "Full Stack",
+    "Diseñador UX", "Data Science", "DevOps", "Cloud", "Figma"
+  ],
+  "aiResponses": [
+    "Basándome en tu perfil, te recomiendo explorar las ofertas de desarrollo full stack. Hay una alta demanda en este sector.",
+    "Para mejorar tu CV, asegúrate de destacar logros cuantificables en cada posición. Por ejemplo: \"Incrementé la eficiencia en un 40%\".",
+    "Las habilidades más solicitadas actualmente son: React, Python, Cloud Computing y Machine Learning. Te sugiero enfocarte en al menos dos de ellas.",
+    "El mercado laboral tech está muy activo. El tiempo promedio de contratación para perfiles senior es de 2-3 semanas.",
+    "Te recomiendo crear un portafolio en línea que muestre tus proyectos. Los reclutadores valoran mucho ver ejemplos de trabajo prácticos.",
+    "Las empresas buscan cada vez más perfiles híbridos. Combinar habilidades técnicas con soft skills como liderazgo y comunicación es clave."
+  ],
+  "heroStats": [
+    { "number": "2,500+", "label": "Ofertas Activas" },
+    { "number": "18,000+", "label": "Profesionales" },
+    { "number": "850+", "label": "Empresas" },
+    { "number": "94%", "label": "Satisfacción" }
+  ]
+}
