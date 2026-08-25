@@ -2,13 +2,44 @@
   "users": [
     {
       "id": 1,
-      "email": "admin@jobconnect.com",
-      "password": "Admin#2026",
+      "email": "admin@nextstepp.com",
+      "password": "123456",
       "name": "Administrador General",
       "role": "admin"
     },
     {
       "id": 2,
+      "email": "empresa@nextstepp.com",
+      "password": "123456",
+      "name": "Carlos Mendoza (TechNova)",
+      "role": "empresa_cliente",
+      "companyName": "TechNova Solutions",
+      "legalName": "TechNova Solutions S.A. de C.V.",
+      "taxId": "RFC-TN202501ABC",
+      "address": "Av. Insurgentes Sur 1234, CDMX",
+      "phone": "+52 55 1234 5678",
+      "website": "https://technova-solutions.com",
+      "representative": "Ing. Carlos Mendoza, Director General",
+      "companyStatus": "approved"
+    },
+    {
+      "id": 3,
+      "email": "usuario@nextstepp.com",
+      "password": "123456",
+      "name": "Ana Gómez (Postulante)",
+      "role": "postulante",
+      "title": "Desarrolladora Full Stack",
+      "phone": "+52 55 9876 5432"
+    },
+    {
+      "id": 4,
+      "email": "admin@jobconnect.com",
+      "password": "Admin#2026",
+      "name": "Administrador JobConnect",
+      "role": "admin"
+    },
+    {
+      "id": 5,
       "email": "techcorp@empresa.com",
       "password": "Tech#2026",
       "name": "Carlos Mendoza",
@@ -23,7 +54,7 @@
       "companyStatus": "approved"
     },
     {
-      "id": 3,
+      "id": 6,
       "email": "greensoft@empresa.com",
       "password": "Green#2026",
       "name": "Laura Torres",
@@ -36,21 +67,6 @@
       "website": "https://greensoft.mx",
       "representative": "Mtra. Laura Torres, CEO",
       "companyStatus": "pending"
-    },
-    {
-      "id": 4,
-      "email": "cloudnet@empresa.com",
-      "password": "Cloud#2026",
-      "name": "Roberto Álvarez",
-      "role": "empresa_cliente",
-      "companyName": "CloudNet Systems",
-      "legalName": "CloudNet Systems GmbH (Sucursal MX)",
-      "taxId": "RFC-CN202308DEF",
-      "address": "Blvd. Díaz Ordaz 891, Monterrey, NL",
-      "phone": "+52 81 5555 1234",
-      "website": "https://cloudnet-systems.com",
-      "representative": "Ing. Roberto Álvarez, CTO",
-      "companyStatus": "rejected"
     }
   ],
   "vacancies": [

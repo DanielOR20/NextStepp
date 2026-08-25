@@ -4,12 +4,31 @@ const STORAGE_KEY = 'jobconnect_db'
 
 function loadDB() {
   const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored) return JSON.parse(stored)
-  const fresh = structuredClone(seedData)
-  fresh.users.forEach((u) => { u.id = u.id })
-  fresh.vacancies.forEach((v) => { v.id = v.id })
-  saveDB(fresh)
-  return fresh
+  let db
+  try {
+    db = stored ? JSON.parse(stored) : structuredClone(seedData)
+  } catch (e) {
+    db = structuredClone(seedData)
+  }
+
+  // Sincronizar usuarios de prueba por defecto de seedData
+  if (seedData && Array.isArray(seedData.users)) {
+    if (!Array.isArray(db.users)) db.users = []
+    seedData.users.forEach((seedUser) => {
+      const existing = db.users.find((u) => u.email.toLowerCase() === seedUser.email.toLowerCase())
+      if (!existing) {
+        db.users.push(seedUser)
+      } else {
+        existing.password = seedUser.password
+        existing.role = seedUser.role
+      }
+    })
+  }
+
+  if (!Array.isArray(db.vacancies)) db.vacancies = seedData.vacancies || []
+
+  saveDB(db)
+  return db
 }
 
 function saveDB(db) {

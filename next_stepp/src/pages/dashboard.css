@@ -82,6 +82,79 @@
   font-size: 0.9rem;
 }
 
+/* Helper Box de Cuentas Demo */
+.auth-demo-box {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px dashed rgba(99, 102, 241, 0.35);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.auth-demo-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.auth-demo-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.demo-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: var(--font);
+}
+
+.demo-chip:hover {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: var(--accent);
+  transform: translateX(3px);
+}
+
+.demo-chip.active {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--success);
+}
+
+.chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chip-dot.admin { background: #8b5cf6; box-shadow: 0 0 6px #8b5cf6; }
+.chip-dot.empresa { background: #06b6d4; box-shadow: 0 0 6px #06b6d4; }
+.chip-dot.usuario { background: #10b981; box-shadow: 0 0 6px #10b981; }
+
+.auth-demo-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
