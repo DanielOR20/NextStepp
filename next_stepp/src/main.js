@@ -5,6 +5,7 @@ import { renderLanding } from './pages/landing.js'
 import { renderLogin } from './pages/login.js'
 import { renderAdminDashboard, renderAdminEmpresas, renderAdminVacantes } from './pages/admin/dashboard.js'
 import { renderEmpresaDashboard } from './pages/client/empresas-clientes.js'
+import { renderPostulaciones } from './pages/postulaciones.js'
 
 // ===================== RUTAS DE LA APLICACIÓN =====================
 addRoute('/', renderLanding)
@@ -13,6 +14,7 @@ addRoute('/admin/dashboard', renderAdminDashboard)
 addRoute('/admin/empresas', renderAdminEmpresas)
 addRoute('/admin/vacantes', renderAdminVacantes)
 addRoute('/empresa/dashboard', renderEmpresaDashboard)
+addRoute('/postulaciones', renderPostulaciones)
 
 // ===================== SPLASH SCREEN CONTROLLER =====================
 export function initSplashScreen() {

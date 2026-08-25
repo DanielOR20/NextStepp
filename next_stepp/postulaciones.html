@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="JobConnect - Panel Avanzado de Gestión de Postulaciones y Candidatos">
+  <title>JobConnect | Módulo de Postulaciones</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Estilos del Módulo -->
+  <link rel="stylesheet" href="./src/postulaciones/postulaciones.css">
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+
+  <!-- Fondo Animado Holográfico -->
+  <div id="animated-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="holographic-overlay"></div>
+  </div>
+
+  <!-- Navbar Principal -->
+  <header class="navbar scrolled">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <span class="logo-icon">NS</span>
+        NextStepp
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="index.html#/">Inicio</a></li>
+        <li><a href="index.html#/admin/dashboard">Panel Admin</a></li>
+        <li><a href="postulaciones.html" class="active">Postulaciones</a></li>
+      </ul>
+      <div class="navbar-actions">
+        <button class="btn btn-primary" id="btnOpenCreateModal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Nueva Postulación</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="postulaciones-wrapper" style="margin-top: 80px;">
+    <!-- Header del Dashboard -->
+    <section class="dashboard-hero">
+      <div>
+        <h1 class="hero-title">Gestión de Postulaciones</h1>
+        <p class="hero-desc">Monitorea, evalúa y gestiona las solicitudes de empleo recibidas en tiempo real. Integrado con DummyJSON /posts API.</p>
+      </div>
+    </section>
+
+    <!-- Métricas / Stats Rápidos -->
+    <section class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon" style="color: #38bdf8;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        </div>
+        <div>
+          <div class="stat-number" id="statTotal">0</div>
+          <div class="stat-label">Total Postulaciones</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color: #34d399;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div>
+          <div class="stat-number" id="statInterviewed">0</div>
+          <div class="stat-label">En Entrevista</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color: #fbbf24;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+        <div>
+          <div class="stat-number" id="statReview">0</div>
+          <div class="stat-label">En Revisión</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barra de Búsqueda y Filtros -->
+    <section class="controls-row">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar por título de vacante, candidato o ID...">
+      </div>
+      <select id="filterTag" class="filter-select">
+        <option value="all">Todas las etiquetas</option>
+      </select>
+      <button class="btn btn-secondary" id="btnRefresh">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        <span>Recargar</span>
+      </button>
+    </section>
+
+    <!-- Indicador de Carga (Spinner) -->
+    <div id="loadingState" class="post-loading-container">
+      <div class="spinner"></div>
+      <p>Consultando postulaciones desde DummyJSON...</p>
+    </div>
+
+    <!-- Grid de Postulaciones -->
+    <section id="postsGrid" class="postulaciones-grid" style="display: none;">
+      <!-- Las tarjetas se renderizan dinámicamente con JavaScript -->
+    </section>
+  </main>
+
+  <!-- MODAL: Crear Postulación -->
+  <div class="post-modal-overlay" id="createModal">
+    <div class="post-modal-content">
+      <div class="post-modal-header">
+        <div class="post-modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span>Nueva Postulación</span>
+        </div>
+        <button class="btn-icon" id="btnCloseCreateModal" title="Cerrar modal">✕</button>
+      </div>
+      <form id="formCreate">
+        <div class="post-modal-body">
+          <div class="form-group">
+            <label class="form-label" for="createUserId">ID del Candidato (userId)</label>
+            <input type="number" id="createUserId" class="form-input" placeholder="Ej: 5" required min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="createTitle">Puesto / Título de la Postulación</label>
+            <input type="text" id="createTitle" class="form-input" placeholder="Ej: Postulación a Desarrollador Frontend Senior" required minlength="5">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="createTags">Habilidades / Tags (separados por coma)</label>
+            <input type="text" id="createTags" class="form-input" placeholder="Ej: JavaScript, React, CSS3, UX">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="createBody">Carta de Presentación / Notas del Candidato</label>
+            <textarea id="createBody" class="form-input" placeholder="Escribe aquí la experiencia relevante, motivaciones o perfil del postulante..." required minlength="10" rows="4"></textarea>
+          </div>
+        </div>
+        <div class="post-modal-footer">
+          <button type="button" class="btn btn-ghost" id="btnCancelCreate">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitCreate">
+            <span>Enviar Postulación</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Editar Postulación (PATCH) -->
+  <div class="post-modal-overlay" id="editModal">
+    <div class="post-modal-content">
+      <div class="post-modal-header">
+        <div class="post-modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          <span>Editar Proceso de Postulación</span>
+        </div>
+        <button class="btn-icon" id="btnCloseEditModal" title="Cerrar modal">✕</button>
+      </div>
+      <form id="formEdit">
+        <input type="hidden" id="editPostId">
+        <div class="post-modal-body">
+          <div class="form-group">
+            <label class="form-label" for="editTitle">Puesto / Título de la Vacante</label>
+            <input type="text" id="editTitle" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editBody">Carta de Presentación / Notas de Proceso</label>
+            <textarea id="editBody" class="form-input" required rows="4"></textarea>
+          </div>
+        </div>
+        <div class="post-modal-footer">
+          <button type="button" class="btn btn-ghost" id="btnCancelEdit">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitEdit">
+            <span>Guardar Cambios (PATCH)</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Contenedor para Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Lógica e interactividad -->
+  <script type="module" src="./src/postulaciones/postulaciones.js"></script>
+</body>
+</html>
