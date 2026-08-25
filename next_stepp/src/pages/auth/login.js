@@ -96,10 +96,11 @@ export function renderLogin() {
       submitBtn.classList.add('success')
 
       setTimeout(() => {
-        if (result.user.role === 'admin') {
-          navigate('/admin/dashboard')
+        const role = result.user.role
+        if (role === 'cliente' || role === 'empresa_cliente') {
+          navigate('/empresas-clientes')
         } else {
-          navigate('/empresa/dashboard')
+          navigate('/admin/dashboard')
         }
       }, 800)
     }, 800)

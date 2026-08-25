@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "users": [
     {
       "id": 1,
@@ -7,6 +7,13 @@
       "password": "1234",
       "name": "Administrador General",
       "role": "admin"
+    },
+    {
+      "id": 5,
+      "email": "reclutador",
+      "password": "1234",
+      "name": "María Reclutadora",
+      "role": "reclutador"
     },
     {
       "id": 2,

@@ -1,21 +1,17 @@
 import { getCurrentUser, logout } from '../../services/auth.service.js'
 import { navigate } from '../../router/router.js'
-import { getVacanciesByCompany, addVacancy, getCompanyById } from '../../services/store.service.js'
-import { classifyCompany } from '../../services/ai.service.js'
-import { statusBadge, modalityLabel } from '../../utils/helpers.js'
+import { getCompanyById, addVacancy } from '../../services/store.service.js'
 
 export function renderEmpresaDashboard() {
   const user = getCurrentUser()
-  if (!user || user.role !== 'empresa_cliente') {
+  if (!user || (user.role !== 'empresa_cliente' && user.role !== 'cliente')) {
     navigate('/login')
     return
   }
 
   const company = getCompanyById(user.id) || user
-  const companyCheck = classifyCompany(company)
-  const vacancies = getVacanciesByCompany(user.id)
-
   const app = document.getElementById('app')
+
   app.innerHTML = `
     <div class="client-layout">
       <header class="client-header">
@@ -26,6 +22,10 @@ export function renderEmpresaDashboard() {
           </a>
         </div>
         <div class="client-header-right">
+          <a href="#/" class="btn btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Inicio
+          </a>
           <div class="client-user-info">
             <div class="client-user-avatar">${user.name.charAt(0)}</div>
             <span>${user.name}</span>
@@ -66,22 +66,6 @@ export function renderEmpresaDashboard() {
           </div>
         </div>
 
-        <div class="company-check-details">
-          <h3>Estado de Verificación</h3>
-          <div class="check-grid">
-            ${companyCheck.checks.map((r) => `
-              <div class="check-item ${r.passed ? 'passed' : 'failed'}">
-                <span class="check-icon">${r.passed ? '✓' : '✗'}</span>
-                <span>${r.rule}</span>
-              </div>
-            `).join('')}
-          </div>
-          <div class="check-score">
-            <span class="check-score-label">Puntuación:</span>
-            <span class="check-score-value ${companyCheck.approved ? 'good' : 'bad'}">${companyCheck.score}%</span>
-          </div>
-        </div>
-
         ${company.companyStatus === 'approved' ? `
           <div class="section-actions">
             <h2>Publicar Vacante</h2>
@@ -106,7 +90,7 @@ export function renderEmpresaDashboard() {
               </div>
               <div class="form-group">
                 <label>Requisitos *</label>
-                <textarea class="form-input form-textarea" id="vf-requirements" rows="3" placeholder="Habilidades, conocimientos y certifications requeridos..." required></textarea>
+                <textarea class="form-input form-textarea" id="vf-requirements" rows="3" placeholder="Habilidades, conocimientos y certificaciones requeridos..." required></textarea>
               </div>
               <div class="form-row">
                 <div class="form-group">
@@ -162,37 +146,6 @@ export function renderEmpresaDashboard() {
               </div>
             </form>
           </div>
-
-          <div class="client-table-container">
-            ${vacancies.length === 0 ? `
-              <div class="empty-state">
-                <p>No tienes vacantes publicadas aún.</p>
-              </div>
-            ` : `
-              <table class="client-table">
-                <thead>
-                  <tr>
-                    <th>Puesto</th>
-                    <th>Modalidad</th>
-                    <th>Salario</th>
-                    <th>Estado</th>
-                    <th>Enviada</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${vacancies.map((v) => `
-                    <tr>
-                      <td><strong>${v.positionName}</strong></td>
-                      <td>${modalityLabel(v.modality)}</td>
-                      <td>${v.salaryRange}</td>
-                      <td>${statusBadge(v.status)}</td>
-                      <td>${v.publishedAt}</td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            `}
-          </div>
         ` : ''}
       </main>
     </div>
@@ -204,12 +157,9 @@ export function renderEmpresaDashboard() {
   })
 
   if (company.companyStatus === 'approved') {
-    const form = document.getElementById('vacancyForm')
-
-    form.addEventListener('submit', (e) => {
+    document.getElementById('vacancyForm').addEventListener('submit', (e) => {
       e.preventDefault()
-
-      const vacancy = {
+      addVacancy({
         companyId: user.id,
         positionName: document.getElementById('vf-positionName').value.trim(),
         description: document.getElementById('vf-description').value.trim(),
@@ -222,9 +172,7 @@ export function renderEmpresaDashboard() {
         workSchedule: document.getElementById('vf-workSchedule').value.trim(),
         salaryRange: document.getElementById('vf-salaryRange').value.trim(),
         deadline: document.getElementById('vf-deadline').value,
-      }
-
-      addVacancy(vacancy)
+      })
       renderEmpresaDashboard()
     })
   }

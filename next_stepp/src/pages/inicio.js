@@ -1,4 +1,5 @@
-// import '../style.css'
+import '../styles/base.css'
+import '../styles/dashboard.css'
 import { icons } from '../icons.js'
 import { renderTopPanel, setupTopPanel, renderLoginModal, setupLoginModal, renderFooter } from '../sidebar.js'
 
