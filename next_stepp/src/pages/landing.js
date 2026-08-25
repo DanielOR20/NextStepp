@@ -184,6 +184,8 @@ export function renderLanding() {
           <li><a href="#empleos">Empleos</a></li>
           <li><a href="#calificaciones">Calificaciones</a></li>
           <li><a href="#ia">Asistente IA</a></li>
+          <li><a href="perfil.html">Mi Perfil</a></li>
+          <li><a href="/src/pages/postulaciones/postulaciones.html" style="color: var(--accent-light); font-weight: 600;">Postulaciones</a></li>
           ${navLinks}
         </ul>
         <div class="navbar-actions">

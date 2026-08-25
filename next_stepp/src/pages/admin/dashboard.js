@@ -481,7 +481,20 @@ function reRender() {
       content = renderEmpresas()
       break
     case 'postulaciones':
-      content = renderPlaceholder('Postulaciones', 'Gestiona las postulaciones de candidatos a vacantes.', SIDEBAR_ITEMS[3].icon)
+      content = `
+        <header class="dashboard-header">
+          <div>
+            <h1>Módulo de Postulaciones (JobConnect)</h1>
+            <p>Monitoreo y administración de candidaturas en tiempo real con API DummyJSON</p>
+          </div>
+          <a href="/src/pages/postulaciones/postulaciones.html" class="btn btn-primary" style="text-decoration:none;">
+            Abrir Módulo Completo ↗
+          </a>
+        </header>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
+          <iframe src="/src/pages/postulaciones/postulaciones.html" style="width: 100%; height: 750px; border: none; border-radius: 8px;"></iframe>
+        </div>
+      `
       break
     case 'entrevistas':
       content = renderPlaceholder('Entrevistas / Notas', 'Programa entrevistas y registra notas de seguimiento.', SIDEBAR_ITEMS[4].icon)

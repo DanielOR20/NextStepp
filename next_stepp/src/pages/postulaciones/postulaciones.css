@@ -1,0 +1,661 @@
+/* ========================================================
+   ESTILOS SISTEMA DE GESTIÓN Y REGISTRO (INSPIRADO EN AZDIGITAL)
+   ======================================================== */
+
+:root {
+  --sys-bg: #e8ecf3;
+  --sys-header-bg: linear-gradient(to bottom, #f0f4f9 0%, #d8e2ee 100%);
+  --sys-blue-banner: #003366;
+  --sys-table-header: #104e8b;
+  --sys-table-header-grad: linear-gradient(to bottom, #1d62a7 0%, #104e8b 100%);
+  --sys-table-border: #a4bed4;
+  --sys-row-hover: #eaf2fb;
+  --sys-row-even: #f7faff;
+  --sys-row-odd: #ffffff;
+  --sys-text: #222222;
+  --sys-btn-blue: #1c64a5;
+  --sys-btn-blue-hover: #154c7d;
+  --sys-border-light: #b0c4de;
+  --sys-success: #2e7d32;
+  --sys-warning: #e65100;
+  --sys-info: #0277bd;
+  --sys-danger: #c62828;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 13px;
+}
+
+body {
+  background-color: var(--sys-bg);
+  color: var(--sys-text);
+  min-height: 100vh;
+}
+
+/* ========================================================
+   ENCABEZADO SUPERIOR
+   ======================================================== */
+.sys-header {
+  background: var(--sys-header-bg);
+  border-bottom: 1px solid #b2c2d4;
+  padding: 8px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.sys-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.sys-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon-box {
+  font-size: 24px;
+}
+
+.sys-brand-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #104e8b;
+  letter-spacing: -0.3px;
+}
+
+.sys-user-welcome {
+  font-size: 12px;
+  color: #444;
+}
+
+.sys-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sys-dropdown {
+  background: #fff;
+  border: 1px solid #9bb3cc;
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sys-link {
+  color: #104e8b;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.sys-link:hover {
+  text-decoration: underline;
+}
+
+.sys-sep {
+  color: #999;
+}
+
+/* ========================================================
+   BANNER AZUL DE TÍTULO PRINCIPAL (AZDIGITAL STYLE)
+   ======================================================== */
+.sys-title-banner {
+  background: var(--sys-blue-banner);
+  color: #ffffff;
+  padding: 10px 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.banner-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.banner-heading {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.banner-subheading {
+  font-size: 13px;
+  font-weight: 500;
+  color: #d1e2f7;
+}
+
+/* ========================================================
+   CONTENIDO Y BARRA DE ACCIONES
+   ======================================================== */
+.sys-content {
+  padding: 12px 18px 30px;
+}
+
+.toolbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.toolbar-left {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-tool {
+  background: #ffffff;
+  border: 1px solid #8ca6c1;
+  color: #104e8b;
+  padding: 5px 12px;
+  border-radius: 3px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 0.15s;
+}
+
+.btn-tool:hover {
+  background: #eef5fc;
+  border-color: #5c85ad;
+}
+
+.btn-tool-blue {
+  background: var(--sys-btn-blue);
+  color: #ffffff;
+  border-color: #104e8b;
+}
+
+.btn-tool-blue:hover {
+  background: var(--sys-btn-blue-hover);
+  color: #ffffff;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-select-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sys-select {
+  padding: 4px 8px;
+  border: 1px solid #8ca6c1;
+  border-radius: 3px;
+  background: #fff;
+  color: #333;
+  outline: none;
+}
+
+.btn-sys-exec {
+  background: #104e8b;
+  color: #ffffff;
+  border: 1px solid #002d59;
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-sys-exec:hover {
+  background: #0d3d6e;
+}
+
+/* ========================================================
+   PANEL DESPLEGABLE DE FILTRO
+   ======================================================== */
+.filter-panel {
+  display: none;
+  background: #ffffff;
+  border: 1px solid #a4bed4;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+
+.filter-panel.active {
+  display: block;
+}
+
+.filter-panel-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #444;
+}
+
+.sys-input, .sys-textarea {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid #9bb3cc;
+  border-radius: 3px;
+  background: #ffffff;
+  color: #222;
+  outline: none;
+}
+
+.sys-input:focus, .sys-textarea:focus {
+  border-color: #104e8b;
+  box-shadow: 0 0 4px rgba(16, 78, 139, 0.3);
+}
+
+/* ========================================================
+   BARRA DE PAGINACIÓN AZDIGITAL STYLE
+   ======================================================== */
+.pagination-bar {
+  background: #d4e2ee;
+  border: 1px solid #a4bed4;
+  border-bottom: none;
+  padding: 5px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pag-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pag-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-pag {
+  background: #ffffff;
+  border: 1px solid #8ca6c1;
+  padding: 2px 7px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 11px;
+  color: #104e8b;
+}
+
+.btn-pag:hover {
+  background: #e4eef7;
+}
+
+.pag-page-indicator {
+  margin: 0 4px;
+}
+
+.pag-page-indicator input {
+  width: 26px;
+  text-align: center;
+  border: 1px solid #8ca6c1;
+  padding: 2px 0;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.pag-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sys-select-sm {
+  padding: 2px 4px;
+  border: 1px solid #8ca6c1;
+  border-radius: 2px;
+  background: #ffffff;
+}
+
+.export-links a {
+  color: #104e8b;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.export-links a:hover {
+  text-decoration: underline;
+}
+
+/* ========================================================
+   TABLA GRID INSTITUCIONAL
+   ======================================================== */
+.table-responsive-container {
+  overflow-x: auto;
+  border: 1px solid #a4bed4;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.az-grid-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.az-grid-table th {
+  background: var(--sys-table-header-grad);
+  color: #ffffff;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-right: 1px solid #2874bc;
+  white-space: nowrap;
+}
+
+.az-grid-table th:last-child {
+  border-right: none;
+}
+
+.az-grid-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #dce4ed;
+  border-right: 1px solid #e5ecf3;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.az-grid-table tr:nth-child(even) td {
+  background-color: var(--sys-row-even);
+}
+
+.az-grid-table tr:nth-child(odd) td {
+  background-color: var(--sys-row-odd);
+}
+
+.az-grid-table tr:hover td {
+  background-color: var(--sys-row-hover);
+}
+
+/* Botón Editar estilo AZDigital */
+.btn-grid-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #1c64a5;
+  color: #ffffff;
+  border: 1px solid #0f487a;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-grid-edit:hover {
+  background: #144978;
+}
+
+.btn-grid-delete {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  color: var(--sys-danger);
+  border: 1px solid #d32f2f;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.btn-grid-delete:hover {
+  background: #ffebee;
+}
+
+/* Badges de Estado */
+.grid-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.badge-entrevista {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.badge-revision {
+  background: #e1f5fe;
+  color: #0277bd;
+  border: 1px solid #81d4fa;
+}
+
+.badge-pendiente {
+  background: #fff3e0;
+  color: #ef6c00;
+  border: 1px solid #ffcc80;
+}
+
+.pill-tag {
+  display: inline-block;
+  background: #e9eff5;
+  color: #335577;
+  border: 1px solid #c4d7e8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  margin: 1px;
+}
+
+/* ========================================================
+   PIE DE PÁGINA DE LA TABLA
+   ======================================================== */
+.table-footer-status {
+  background: #e2ecf5;
+  border: 1px solid #a4bed4;
+  border-top: none;
+  padding: 6px 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #555;
+}
+
+/* ========================================================
+   SPINNER & LOADING
+   ======================================================== */
+.loading-state-box {
+  background: #ffffff;
+  border: 1px solid #a4bed4;
+  padding: 30px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #104e8b;
+  font-weight: 600;
+}
+
+.spinner-blue {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #d4e2ee;
+  border-radius: 50%;
+  border-top-color: #104e8b;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================================
+   VENTANAS MODALES (SISTEMA DE GESTIÓN)
+   ======================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  padding: 15px;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-window {
+  background: #ffffff;
+  border: 2px solid #104e8b;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+
+.modal-win-header {
+  background: var(--sys-table-header-grad);
+  color: #ffffff;
+  padding: 8px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+}
+
+.win-title {
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.win-close {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.modal-win-body {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fbfcfe;
+}
+
+.win-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.win-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.win-form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+}
+
+.req {
+  color: #d32f2f;
+}
+
+.modal-win-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid #dce4ed;
+  margin-top: 6px;
+}
+
+/* ========================================================
+   TOAST NOTIFICATIONS
+   ======================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  min-width: 300px;
+  background: #ffffff;
+  border: 1px solid #9bb3cc;
+  border-left: 4px solid #104e8b;
+  border-radius: 4px;
+  padding: 10px 14px;
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateX(120%);
+  transition: transform 0.3s ease;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast-success { border-left-color: var(--sys-success); }
+.toast-error { border-left-color: var(--sys-danger); }
+.toast-info { border-left-color: var(--sys-info); }

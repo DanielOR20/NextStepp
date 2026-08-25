@@ -14,6 +14,7 @@ export default defineConfig({
         empleos: resolve(__dirname, 'empleos.html'),
         calificaciones: resolve(__dirname, 'calificaciones.html'),
         ia: resolve(__dirname, 'ia.html'),
+        postulaciones: resolve(__dirname, 'src/pages/postulaciones/postulaciones.html'),
       },
     },
   },

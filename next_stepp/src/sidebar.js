@@ -1,18 +1,19 @@
 import { icons } from './icons.js'
 
 const navItems = [
-  { id: 'inicio', label: 'Inicio', icon: icons.home, file: 'inicio.html' },
+  { id: 'inicio', label: 'Inicio', icon: icons.home, file: 'index.html#/' },
   { id: 'perfil', label: 'Mi Perfil', icon: icons.user, file: 'perfil.html' },
   { id: 'empleos', label: 'Empleos', icon: icons.briefcaseLarge, file: 'empleos.html' },
   { id: 'calificaciones', label: 'Calificaciones', icon: icons.starLarge, file: 'calificaciones.html' },
   { id: 'ia', label: 'Asistente IA', icon: icons.bot, file: 'ia.html' },
+  { id: 'postulaciones', label: 'Postulaciones', icon: icons.briefcaseLarge, file: 'src/pages/postulaciones/postulaciones.html' },
 ]
 
 export function renderTopPanel(activePage) {
   return `
     <header class="top-panel" id="topPanel">
       <div class="top-panel-inner">
-        <a href="inicio.html" class="top-panel-logo">
+        <a href="index.html#/" class="top-panel-logo">
           <span class="logo-icon">NS</span>
           NextStepp
         </a>
@@ -29,7 +30,7 @@ export function renderTopPanel(activePage) {
           </ul>
         </nav>
         <div class="top-panel-actions">
-          <button class="btn btn-primary" id="loginBtn">Iniciar Sesión</button>
+          <a href="index.html#/login" class="btn btn-primary" id="loginBtn" style="text-decoration:none;">Iniciar Sesión</a>
           <button class="top-panel-mobile-toggle" id="mobileToggle">${icons.menu}</button>
         </div>
       </div>
