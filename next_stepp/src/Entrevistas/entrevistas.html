@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Entrevista - NextStepp</title>
+    <!-- SweetAlert2 para notificaciones y modales profesionales -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --bg-main: #0b0e14;
+            --bg-card: #131822;
+            --bg-sidebar: #090d12;
+            --border-color: #21262d;
+            --border-hover: #30363d;
+            --text-main: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #238636;
+            --accent-hover: #2ea043;
+            --primary: #58a6ff;
+            --primary-hover: #1f6feb;
+            --danger: #da3633;
+            --danger-hover: #f85149;
+            --warning: #d29922;
+            --success: #3fb950;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+        }
+
+        .sidebar-brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            padding: 0 24px 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-brand span {
+            color: var(--primary);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 16px 0;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 24px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu li.active a, .sidebar-menu li a:hover {
+            color: #fff;
+            background-color: rgba(88, 166, 255, 0.08);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Main Container */
+        .main-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .topbar {
+            height: 64px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            background-color: var(--bg-sidebar);
+        }
+
+        .topbar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .content-body {
+            padding: 28px 32px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            flex-grow: 1;
+        }
+
+        /* Layout Grid Superior: Detalle Actual & Formulario de Evaluación */
+        .top-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+        }
+
+        /* Cards & Containers */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .info-group {
+            margin-bottom: 14px;
+        }
+
+        .info-group label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .info-group p {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge.programmed { background: rgba(88, 166, 255, 0.15); color: var(--primary); }
+        .badge.approved { background: rgba(63, 185, 80, 0.15); color: var(--success); }
+        .badge.pending { background: rgba(210, 153, 34, 0.15); color: var(--warning); }
+        .badge.cancelled { background: rgba(218, 54, 51, 0.15); color: var(--danger); }
+
+        /* Formulario de Evaluación */
+        .evaluation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .form-control {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: #fff;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        /* Botones */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+        .btn-secondary { background-color: #21262d; color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background-color: #30363d; border-color: var(--border-hover); }
+        .btn-success { background-color: var(--accent); }
+        .btn-success:hover { background-color: var(--accent-hover); }
+
+        /* Apartado Inferior: Entrevistas Anteriores a lo Largo (Tipo Registro Horizontal / Tabla Avanzada) */
+        .history-section {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .history-header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Formato de Registro a lo Largo (Horizontal Row Layout) */
+        .history-table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .history-table th {
+            background-color: var(--bg-main);
+            color: var(--text-muted);
+            padding: 12px 16px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .history-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        .history-table tr {
+            transition: background-color 0.15s;
+        }
+
+        .history-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .history-table tbody tr.active-row {
+            background-color: rgba(88, 166, 255, 0.06);
+            border-left: 3px solid var(--primary);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <span>⚡</span> NextStepp
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Candidatos</a></li>
+            <li><a href="#">Vacantes</a></li>
+            <li><a href="#">Empresas</a></li>
+            <li><a href="#">Postulaciones</a></li>
+            <li class="active"><a href="#">Entrevistas</a></li>
+            <li><a href="#">Tareas</a></li>
+            <li><a href="#">Perfiles</a></li>
+            <li><a href="#">Reportes</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="topbar">
+            <div class="topbar-title">Gestión y Detalle de Entrevista - NextStepp</div>
+            <div>
+                <button class="btn btn-success btn-sm" onclick="abrirModalNuevaEntrevista()">+ Nueva Entrevista</button>
+            </div>
+        </div>
+
+        <div class="content-body">
+            <!-- Grid Superior -->
+            <div class="top-grid">
+                <!-- Columna Izquierda: Detalle actual -->
+                <div class="card">
+                    <h2 class="section-title">Detalle de la Entrevista</h2>
+                    
+                    <div class="info-group">
+                        <label>Candidato</label>
+                        <p id="info-candidato" style="font-size: 16px; font-weight: 700;">María González</p>
+                        <span class="badge programmed" id="info-estado" style="margin-top: 4px;">Programada</span>
+                    </div>
+
+                    <div class="info-group">
+                        <label>Vacante</label>
+                        <p id="info-vacante">Desarrollador Frontend Junior</p>
+                    </div>
+
+                    <div class="info-group">
+                        <label>Empresa</label>
+                        <p id="info-empresa">Tech Solutions CR</p>
+                    </div>
+
+                    <div class="info-group">
+                        <label>Reclutador</label>
+                        <p id="info-reclutador">Daniel Ortega</p>
+                    </div>
+
+                    <div style="display: flex; gap: 16px;">
+                        <div class="info-group" style="flex: 1;">
+                            <label>Fecha</label>
+                            <p id="info-fecha">25/08/2026</p>
+                        </div>
+                        <div class="info-group" style="flex: 1;">
+                            <label>Hora</label>
+                            <p id="info-hora">10:00 a.m.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-group">
+                        <label>Modalidad</label>
+                        <p id="info-modalidad">Virtual</p>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 18px;">
+                        <button class="btn btn-danger btn-sm" onclick="cancelarEntrevistaActiva()">Cancelar</button>
+                        <button class="btn btn-secondary btn-sm" onclick="cambiarFechaEntrevistaActiva()">Cambiar Fecha</button>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Formulario de Evaluación -->
+                <div class="card">
+                    <h2 class="section-title">Evaluación de la entrevista</h2>
+                    
+                    <form id="form-evaluacion" onsubmit="guardarEvaluacion(event)">
+                        <div class="evaluation-grid">
+                            <div class="form-group">
+                                <label>Conocimientos técnicos (1-5)</label>
+                                <input type="number" min="1" max="5" class="form-control" id="eval-tec" value="2" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Comunicación (1-5)</label>
+                                <input type="number" min="1" max="5" class="form-control" id="eval-com" value="5" required>
+                            </div>
+                        </div>
+
+                        <div class="evaluation-grid">
+                            <div class="form-group">
+                                <label>Experiencia (1-5)</label>
+                                <input type="number" min="1" max="5" class="form-control" id="eval-exp" value="3" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Adaptabilidad (1-5)</label>
+                                <input type="number" min="1" max="5" class="form-control" id="eval-adap" value="5" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Observaciones generales</label>
+                            <textarea class="form-control" id="eval-obs">Candidata con buen potencial técnico y excelente adaptación.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Resultado final</label>
+                            <select class="form-control" id="eval-resultado">
+                                <option value="En espera / Por decidir">En espera / Por decidir</option>
+                                <option value="Aprobada — Avanza de etapa">Aprobada — Avanza de etapa</option>
+                                <option value="Rechazada">Rechazada</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn" style="margin-top: 8px;">Guardar evaluación</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Apartado Inferior: Historial de Entrevistas Anteriores (Formato Registro Horizontal / Tabla) -->
+            <div class="history-section">
+                <div class="history-header-controls">
+                    <h2 class="section-title" style="margin-bottom: 0;">Historial de Entrevistas Anteriores</h2>
+                    
+                    <div class="search-filter-group">
+                        <label style="font-size: 13px; color: var(--text-muted);">Buscar por fecha:</label>
+                        <input type="date" id="buscar-fecha" class="form-control" style="padding: 6px 10px;" oninput="filtrarEntrevistas()">
+                        <button class="btn btn-secondary btn-sm" onclick="limpiarBusqueda()">Limpiar</button>
+                    </div>
+                </div>
+
+                <div class="history-table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Candidato</th>
+                                <th>Vacante / Empresa</th>
+                                <th>Fecha y Hora</th>
+                                <th>Modalidad</th>
+                                <th>Resultado / Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-entrevistas-cuerpo">
+                            <!-- Inyectado dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Funcionalidad Avanzada -->
+    <script>
+        // Base de datos de entrevistas simulada con LocalStorage
+        let entrevistasData = JSON.parse(localStorage.getItem('nextstepp_entrevistas_v2')) || [
+            {
+                id: 1,
+                candidato: "María González",
+                vacante: "Desarrollador Frontend Junior",
+                empresa: "Tech Solutions CR",
+                reclutador: "Daniel Ortega",
+                fecha: "2026-08-25",
+                hora: "10:00 a.m.",
+                modalidad: "Virtual",
+                estado: "Programada",
+                tec: 2, com: 5, exp: 3, adap: 5,
+                obs: "Candidata con buen potencial técnico y excelente adaptación.",
+                resultado: "En espera / Por decidir"
+            },
+            {
+                id: 2,
+                candidato: "María González",
+                vacante: "Desarrollador Frontend Junior",
+                empresa: "Tech Solutions CR",
+                reclutador: "Daniel Ortega",
+                fecha: "2026-08-20",
+                hora: "02:00 p.m.",
+                modalidad: "Presencial",
+                estado: "Aprobada",
+                tec: 4, com: 4, exp: 4, adap: 4,
+                obs: "Muy buena entrevista técnica inicial.",
+                resultado: "Aprobada — Avanza de etapa"
+            },
+            {
+                id: 3,
+                candidato: "María González",
+                vacante: "Soporte TI",
+                empresa: "Global Tech",
+                reclutador: "Carlos Pérez",
+                fecha: "2026-08-15",
+                hora: "11:00 a.m.",
+                modalidad: "Virtual",
+                estado: "Finalizada",
+                tec: 3, com: 3, exp: 3, adap: 3,
+                obs: "Faltó profundidad en redes.",
+                resultado: "Rechazada"
+            }
+        ];
+
+        let entrevistaActivaId = 1;
+
+        // Función para formatear fechas YYYY-MM-DD a DD/MM/YYYY de forma limpia
+        function formatearFechaLegible(fechaStr) {
+            if (!fechaStr) return '';
+            const partes = fechaStr.split('-');
+            if (partes.length === 3) {
+                return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            }
+            return fechaStr;
+        }
+
+        // Cargar y renderizar la tabla horizontal "a lo largo"
+        function cargarEntrevistas(filtroFecha = '') {
+            const tbody = document.getElementById('tabla-entrevistas-cuerpo');
+            tbody.innerHTML = '';
+
+            let filtradas = entrevistasData;
+            if (filtroFecha) {
+                filtradas = entrevistasData.filter(e => e.fecha === filtroFecha);
+            }
+
+            if (filtradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No se encontraron entrevistas registradas para esta fecha.</td></tr>`;
+                return;
+            }
+
+            filtradas.forEach(ent => {
+                const tr = document.createElement('tr');
+                if (ent.id === entrevistaActivaId) {
+                    tr.classList.add('active-row');
+                }
+
+                let badgeClass = 'pending';
+                if (ent.resultado.includes('Aprobada')) badgeClass = 'approved';
+                else if (ent.resultado.includes('Rechazada')) badgeClass = 'cancelled';
+
+                tr.innerHTML = `
+                    <td><strong>${ent.candidato}</strong><br><span style="font-size:11px; color:var(--text-muted);">${ent.reclutador}</span></td>
+                    <td>${ent.vacante}<br><span style="font-size:11px; color:var(--text-muted);">${ent.empresa}</span></td>
+                    <td>${formatearFechaLegible(ent.fecha)}<br><span style="font-size:11px; color:var(--text-muted);">${ent.hora}</span></td>
+                    <td>${ent.modalidad}</td>
+                    <td><span class="badge ${badgeClass}">${ent.resultado}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="seleccionarEntrevista(${ent.id})">Ver / Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="borrarEntrevista(${ent.id})">Borrar</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Seleccionar entrevista para cargar en el panel superior y formulario
+        function seleccionarEntrevista(id) {
+            entrevistaActivaId = id;
+            const ent = entrevistasData.find(e => e.id === id);
+            if (!ent) return;
+
+            document.getElementById('info-candidato').innerText = ent.candidato;
+            document.getElementById('info-vacante').innerText = ent.vacante;
+            document.getElementById('info-empresa').innerText = ent.empresa;
+            document.getElementById('info-reclutador').innerText = ent.reclutador;
+            document.getElementById('info-fecha').innerText = formatearFechaLegible(ent.fecha);
+            document.getElementById('info-hora').innerText = ent.hora;
+            document.getElementById('info-modalidad').innerText = ent.modalidad;
+            document.getElementById('info-estado').innerText = ent.estado;
+
+            // Rellenar formulario de evaluación
+            document.getElementById('eval-tec').value = ent.tec;
+            document.getElementById('eval-com').value = ent.com;
+            document.getElementById('eval-exp').value = ent.exp;
+            document.getElementById('eval-adap').value = ent.adap;
+            document.getElementById('eval-obs').value = ent.obs;
+            document.getElementById('eval-resultado').value = ent.resultado;
+
+            cargarEntrevistas(document.getElementById('buscar-fecha').value);
+        }
+
+        // Guardar evaluación con SweetAlert2
+        function guardarEvaluacion(e) {
+            e.preventDefault();
+            const ent = entrevistasData.find(item => item.id === entrevistaActivaId);
+            if (!ent) return;
+
+            ent.tec = document.getElementById('eval-tec').value;
+            ent.com = document.getElementById('eval-com').value;
+            ent.exp = document.getElementById('eval-exp').value;
+            ent.adap = document.getElementById('eval-adap').value;
+            ent.obs = document.getElementById('eval-obs').value;
+            ent.resultado = document.getElementById('eval-resultado').value;
+
+            localStorage.setItem('nextstepp_entrevistas_v2', JSON.stringify(entrevistasData));
+            
+            Swal.fire({
+                icon: 'success',
+                title: '¡Evaluación guardada!',
+                text: 'Los cambios de la entrevista se han actualizado correctamente.',
+                background: '#131822',
+                color: '#e6edf3',
+                confirmButtonColor: '#238636',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
+            cargarEntrevistas(document.getElementById('buscar-fecha').value);
+        }
+
+        // Borrar entrevista con confirmación SweetAlert2
+        function borrarEntrevista(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta entrevista se eliminará permanentemente del registro.",
+                icon: 'warning',
+                showCancelButton: true,
+                background: '#131822',
+                color: '#e6edf3',
+                confirmButtonColor: '#da3633',
+                cancelButtonColor: '#21262d',
+                confirmButtonText: 'Sí, borrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    entrevistasData = entrevistasData.filter(e => e.id !== id);
+                    localStorage.setItem('nextstepp_entrevistas_v2', JSON.stringify(entrevistasData));
+                    
+                    if (entrevistaActivaId === id && entrevistasData.length > 0) {
+                        seleccionarEntrevista(entrevistasData[0].id);
+                    } else {
+                        cargarEntrevistas(document.getElementById('buscar-fecha').value);
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        text: 'La entrevista ha sido borrada.',
+                        background: '#131822',
+                        color: '#e6edf3',
+                        confirmButtonColor: '#238636',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+
+        // Cambiar fecha de la entrevista activa de forma robusta con SweetAlert2 input date
+        function cambiarFechaEntrevistaActiva() {
+            const ent = entrevistasData.find(e => e.id === entrevistaActivaId);
+            if (!ent) return;
+
+            Swal.fire({
+                title: 'Cambiar Fecha de Entrevista',
+                html: `<p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">Selecciona la nueva fecha para ${ent.candidato}</p>`,
+                input: 'date',
+                inputValue: ent.fecha,
+                background: '#131822',
+                color: '#e6edf3',
+                confirmButtonColor: '#58a6ff',
+                cancelButtonColor: '#21262d',
+                showCancelButton: true,
+                confirmButtonText: 'Actualizar fecha',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    ent.fecha = result.value;
+                    localStorage.setItem('nextstepp_entrevistas_v2', JSON.stringify(entrevistasData));
+                    seleccionarEntrevista(entrevistaActivaId);
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Fecha actualizada',
+                        text: `Nueva fecha: ${formatearFechaLegible(result.value)}`,
+                        background: '#131822',
+                        color: '#e6edf3',
+                        confirmButtonColor: '#238636',
+                        timer: 1800,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+
+        // Cancelar entrevista activa
+        function cancelarEntrevistaActiva() {
+            const ent = entrevistasData.find(e => e.id === entrevistaActivaId);
+            if (ent) {
+                ent.estado = 'Cancelada';
+                ent.resultado = 'Cancelada — No realizada';
+                localStorage.setItem('nextstepp_entrevistas_v2', JSON.stringify(entrevistasData));
+                seleccionarEntrevista(entrevistaActivaId);
+                
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Entrevista Cancelada',
+                    text: 'El estado se ha actualizado a cancelada.',
+                    background: '#131822',
+                    color: '#e6edf3',
+                    confirmButtonColor: '#58a6ff',
+                    timer: 1800,
+                    showConfirmButton: false
+                });
+            }
+        }
+
+        // Filtrar entrevistas por fecha exacta
+        function filtrarEntrevistas() {
+            const fechaVal = document.getElementById('buscar-fecha').value;
+            cargarEntrevistas(fechaVal);
+        }
+
+        // Limpiar búsqueda
+        function limpiarBusqueda() {
+            document.getElementById('buscar-fecha').value = '';
+            cargarEntrevistas();
+        }
+
+        // Modal simple para crear nueva entrevista
+        function abrirModalNuevaEntrevista() {
+            Swal.fire({
+                title: 'Registrar Nueva Entrevista',
+                html: `
+                    <div style="text-align: left; display: flex; flex-direction: column; gap: 10px; font-size:13px;">
+                        <label>Candidato:</label>
+                        <input id="swal-candidato" class="swal2-input" placeholder="Nombre del candidato" style="margin:0; width:100%; background:#0b0e14; color:#fff; border:1px solid #30363d;">
+                        
+                        <label>Vacante:</label>
+                        <input id="swal-vacante" class="swal2-input" placeholder="Ej. Backend Developer" style="margin:0; width:100%; background:#0b0e14; color:#fff; border:1px solid #30363d;">
+                        
+                        <label>Empresa:</label>
+                        <input id="swal-empresa" class="swal2-input" placeholder="Nombre de empresa" style="margin:0; width:100%; background:#0b0e14; color:#fff; border:1px solid #30363d;">
+                        
+                        <label>Fecha:</label>
+                        <input type="date" id="swal-fecha" class="swal2-input" style="margin:0; width:100%; background:#0b0e14; color:#fff; border:1px solid #30363d;">
+                    </div>
+                `,
+                background: '#131822',
+                color: '#e6edf3',
+                confirmButtonColor: '#238636',
+                cancelButtonColor: '#21262d',
+                showCancelButton: true,
+                confirmButtonText: 'Crear',
+                preConfirm: () => {
+                    const candidato = document.getElementById('swal-candidato').value;
+                    const vacante = document.getElementById('swal-vacante').value;
+                    const empresa = document.getElementById('swal-empresa').value;
+                    const fecha = document.getElementById('swal-fecha').value;
+                    if (!candidato || !vacante || !fecha) {
+                        Swal.showValidationMessage('Por favor completa al menos candidato, vacante y fecha.');
+                    }
+                    return { candidato, vacante, empresa: empresa || 'Empresa Confidencial', fecha };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const nueva = {
+                        id: Date.now(),
+                        candidato: result.value.candidato,
+                        vacante: result.value.vacante,
+                        empresa: result.value.empresa,
+                        reclutador: "Daniel Ortega",
+                        fecha: result.value.fecha,
+                        hora: "09:00 a.m.",
+                        modalidad: "Virtual",
+                        estado: "Programada",
+                        tec: 3, com: 3, exp: 3, adap: 3,
+                        obs: "Entrevista recién programada.",
+                        resultado: "En espera / Por decidir"
+                    };
+                    entrevistasData.unshift(nueva);
+                    localStorage.setItem('nextstepp_entrevistas_v2', JSON.stringify(entrevistasData));
+                    seleccionarEntrevista(nueva.id);
+                }
+            });
+        }
+
+        // Inicializar al cargar
+        window.onload = function() {
+            cargarEntrevistas();
+            if(entrevistasData.length > 0) {
+                seleccionarEntrevista(entrevistasData[0].id);
+            }
+        };
+    </script>
+</body>
+</html>
