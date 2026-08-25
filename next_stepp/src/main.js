@@ -6,7 +6,7 @@ import { renderLogin } from './pages/login.js'
 import { renderAdminDashboard, renderAdminEmpresas, renderAdminVacantes } from './pages/admin/dashboard.js'
 import { renderEmpresaDashboard } from './pages/client/empresas-clientes.js'
 
-// ===================== RUTAS DE LA APLICACIÓN (AARON) =====================
+// ===================== RUTAS DE LA APLICACIÓN =====================
 addRoute('/', renderLanding)
 addRoute('/login', renderLogin)
 addRoute('/admin/dashboard', renderAdminDashboard)
@@ -71,7 +71,11 @@ export function scrollToSection(selector) {
   const el = document.querySelector(selector)
   if (el) el.scrollIntoView({ behavior: 'smooth' })
 }
+export function scrollTo(selector) {
+  scrollToSection(selector)
+}
 window.scrollToSection = scrollToSection
+window.scrollTo = scrollToSection
 
 // ===================== INICIALIZACIÓN DE LA APP =====================
 function initApp() {
