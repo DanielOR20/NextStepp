@@ -1,5 +1,6 @@
 import './styles/base.css'
 import './styles/dashboard.css'
+import './styles/tareas.css'
 
 import { addRoute, initRouter } from './router/router.js'
 import { renderLanding } from './pages/landing/landing.js'
