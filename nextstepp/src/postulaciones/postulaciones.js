@@ -9,6 +9,10 @@ import {
   deletePostulacion
 } from './services/postulaciones.service.js';
 
+import { navigate } from './router/router.js';
+
+// Estado de la aplicación
+
 // Estado de la aplicación
 let postulaciones = [];
 let currentPage = 1;

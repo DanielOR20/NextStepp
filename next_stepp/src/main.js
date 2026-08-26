@@ -16,7 +16,9 @@ import {
   renderAdminReports,
 } from './pages/admin/dashboard.js'
 import { renderEmpresaDashboard } from './pages/client/empresas-clientes.js'
+import { renderPostulaciones } from './pages/postulaciones.js'
 
+// ===================== RUTAS DE LA APLICACIÓN =====================
 addRoute('/', renderLanding)
 addRoute('/login', renderLogin)
 addRoute('/register', renderRegister)

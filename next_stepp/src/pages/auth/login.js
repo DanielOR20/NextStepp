@@ -20,6 +20,30 @@ export function renderLogin() {
             <h1>Iniciar Sesión</h1>
             <p>Accede a tu cuenta para gestionar oportunidades laborales</p>
           </div>
+
+          <!-- Helper Box con Credenciales de Prueba -->
+          <div class="auth-demo-box">
+            <div class="auth-demo-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Cuentas de Prueba (Clic para auto-completar):</span>
+            </div>
+            <div class="auth-demo-chips">
+              <button type="button" class="demo-chip" data-email="admin@nextstepp.com" data-pass="123456" data-role="admin">
+                <span class="chip-dot admin"></span>
+                <strong>Admin:</strong> admin@nextstepp.com
+              </button>
+              <button type="button" class="demo-chip" data-email="empresa@nextstepp.com" data-pass="123456" data-role="empresa_cliente">
+                <span class="chip-dot empresa"></span>
+                <strong>Empresa:</strong> empresa@nextstepp.com
+              </button>
+              <button type="button" class="demo-chip" data-email="usuario@nextstepp.com" data-pass="123456" data-role="postulante">
+                <span class="chip-dot usuario"></span>
+                <strong>Postulante:</strong> usuario@nextstepp.com
+              </button>
+            </div>
+            <div class="auth-demo-sub">Contraseña para todas: <code style="color:var(--accent-light); font-weight:700;">123456</code></div>
+          </div>
+
           <form class="auth-form" id="authForm">
             <div class="form-group">
               <label for="authEmail">Usuario / Email</label>
@@ -69,6 +93,20 @@ export function renderLogin() {
   const submitBtn = document.getElementById('authSubmit')
   const errorEl = document.getElementById('authError')
 
+  // Auto-completar al presionar los chips de demo
+  document.querySelectorAll('.demo-chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      emailInput.value = chip.dataset.email
+      passwordInput.value = chip.dataset.pass
+      errorEl.classList.remove('visible')
+      
+      // Resaltar formulario
+      emailInput.focus()
+      chip.classList.add('active')
+      setTimeout(() => chip.classList.remove('active'), 500)
+    })
+  })
+
   form.addEventListener('submit', (e) => {
     e.preventDefault()
     const email = emailInput.value.trim()
@@ -105,7 +143,7 @@ export function renderLogin() {
         } else {
           navigate('/admin/dashboard')
         }
-      }, 800)
-    }, 800)
+      }, 700)
+    }, 600)
   })
 }

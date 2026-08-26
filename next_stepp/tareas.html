@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="tasks-container">
   <!-- Header principal -->
   <header class="tasks-header">
@@ -44,3 +45,178 @@
     </section>
   </div>
 </div>
+=======
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Tablero Kanban de Tareas del Reclutador - NextStepp" />
+  <title>NextStepp | Tareas del Reclutador</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Estilos del Módulo Kanban -->
+  <link rel="stylesheet" href="./tareas.css" />
+</head>
+<body>
+  <!-- Fondo Holográfico Animado -->
+  <div class="animated-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Contenedor Principal del Módulo -->
+  <div class="kanban-module">
+    <!-- Header del Módulo -->
+    <header class="kanban-header">
+      <div class="header-info">
+        <div class="header-badge">
+          <span class="badge-dot"></span>
+          Panel del Reclutador
+        </div>
+        <h1 class="header-title">Tareas del Reclutador</h1>
+        <p class="header-subtitle">
+          Organiza, prioriza y gestiona el flujo de seguimiento de candidatos y empresas mediante el tablero ágil Kanban.
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" id="btnOpenTaskModal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Nueva Tarea</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Tablero Kanban (3 Columnas) -->
+    <main class="kanban-board">
+      <!-- Columna 1: Pendiente -->
+      <section class="kanban-column" data-status="pendiente">
+        <div class="column-header">
+          <div class="column-title-group">
+            <span class="status-indicator status-pendiente"></span>
+            <h2>Pendiente</h2>
+          </div>
+          <span class="task-count" id="count-pendiente">0</span>
+        </div>
+        <div class="task-list" id="list-pendiente">
+          <!-- Tarjetas renderizadas dinámicamente -->
+        </div>
+      </section>
+
+      <!-- Columna 2: En Revisión -->
+      <section class="kanban-column" data-status="en_revision">
+        <div class="column-header">
+          <div class="column-title-group">
+            <span class="status-indicator status-revision"></span>
+            <h2>En Revisión</h2>
+          </div>
+          <span class="task-count" id="count-en_revision">0</span>
+        </div>
+        <div class="task-list" id="list-en_revision">
+          <!-- Tarjetas renderizadas dinámicamente -->
+        </div>
+      </section>
+
+      <!-- Columna 3: Completado -->
+      <section class="kanban-column" data-status="completado">
+        <div class="column-header">
+          <div class="column-title-group">
+            <span class="status-indicator status-completado"></span>
+            <h2>Completado</h2>
+          </div>
+          <span class="task-count" id="count-completado">0</span>
+        </div>
+        <div class="task-list" id="list-completado">
+          <!-- Tarjetas renderizadas dinámicamente -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: Crear Nueva Tarea -->
+  <div class="modal-backdrop" id="taskModalBackdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
+          <h3>Nueva Tarea del Reclutador</h3>
+        </div>
+        <button class="btn-close" id="btnCloseTaskModal" title="Cerrar modal">&times;</button>
+      </div>
+
+      <form id="taskForm" class="modal-form">
+        <div class="form-group">
+          <label for="taskTitle" class="form-label">Título de la Tarea *</label>
+          <input
+            type="text"
+            id="taskTitle"
+            class="form-control"
+            placeholder="Ej: Entrevista técnica con candidato Frontend"
+            required
+            minlength="3"
+            maxlength="100"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="taskAssignee" class="form-label">Candidato / Empresa Asociada *</label>
+          <input
+            type="text"
+            id="taskAssignee"
+            class="form-control"
+            placeholder="Ej: Carlos Mendoza (TechNova Solutions)"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="taskPriority" class="form-label">Nivel de Prioridad *</label>
+            <select id="taskPriority" class="form-control form-select" required>
+              <option value="alta">🔴 Alta (Urgente)</option>
+              <option value="media" selected>🟡 Media (Normal)</option>
+              <option value="baja">🟢 Baja (Planificada)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="taskDueDate" class="form-label">Fecha Límite *</label>
+            <input
+              type="date"
+              id="taskDueDate"
+              class="form-control"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="btnCancelTaskModal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitTask">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Crear Tarea</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Feedback -->
+  <div class="kanban-toast" id="kanbanToast"></div>
+
+  <!-- Script Lógico -->
+  <script type="module" src="./tareas.js"></script>
+</body>
+</html>
+>>>>>>> 35a2536de81bf4baa67b7ae6583d899b66d3efee
