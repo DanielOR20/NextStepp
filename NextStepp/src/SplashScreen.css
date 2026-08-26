@@ -1,0 +1,101 @@
+/* src/SplashScreen.css */
+.splash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0a0c10; /* Fondo oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Asegura que esté encima de todo */
+  transition: opacity 1s ease-out;
+  opacity: 1;
+}
+
+.splash-overlay.closing {
+  opacity: 0; /* Desvanece el fondo */
+}
+
+.splash-content {
+  text-align: center;
+}
+
+/* Contenedor del patrón */
+.ns-loader {
+  position: relative;
+  width: 150px; /* Ajusta el tamaño de tu logo */
+  height: 150px;
+  margin-bottom: 20px;
+}
+
+/* Estilo de los trazos anchos */
+.loader-line {
+  position: absolute;
+  box-sizing: border-box;
+  border: 12px solid red; /* "Trazos de luz anchos y sólidos" de tu boceto */
+  border-radius: 10px; /* Esquinas redondeadas suaves */
+  
+  /* Animación de dibujo inicial */
+  animation: drawPath 2s infinite ease-in-out; 
+}
+
+/* La primera forma (la "N" en tu boceto) */
+.line-1 {
+  top: 10%;
+  left: 0%;
+  width: 70%;
+  height: 80%;
+  border-color: #ff4d4d; /* Un rojo neón */
+  animation-delay: 0s;
+}
+
+/* La segunda forma (la "S" en tu boceto) */
+.line-2 {
+  bottom: 10%;
+  right: 0%;
+  width: 70%;
+  height: 80%;
+  border-color: #ff1a1a; /* Un rojo neón más oscuro */
+  border-radius: 10px 0 10px 10px; /* Ajuste de la esquina */
+  animation-delay: 0.2s;
+}
+
+.splash-text {
+  color: white;
+  font-family: 'Inter', sans-serif; /* Usa la fuente de tu proyecto */
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+/* --- ANIMACIÓN DE CIERRE (La "Explosión" de desbloqueo) --- */
+.splash-overlay.closing .ns-loader {
+  animation: unlockExplosion 1s forwards ease-in-out;
+}
+
+@keyframes unlockExplosion {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(2); /* Se expande */
+    border-color: #00d2ff; /* Cambia a cian */
+  }
+  100% {
+    transform: scale(5); /* Se dispersa fuera de la pantalla */
+    opacity: 0;
+    border-color: #0047ab; /* Se desvanece en azul */
+  }
+}
+
+/* --- Animación de dibujo (bucle) --- */
+@keyframes drawPath {
+  0%, 100% {
+    clip-path: inset(0 0 95% 0); /* Empieza invisible */
+  }
+  50% {
+    clip-path: inset(0 0 0 0); /* Se dibuja completamente */
+  }
+}
