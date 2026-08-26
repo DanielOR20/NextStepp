@@ -11,6 +11,7 @@ import { classifyCompany, classifyVacancy } from '../../services/ai.service.js'
 import { getPostulaciones, createPostulacion, updatePostulacion, deletePostulacion } from '../postulaciones/services/postulaciones.service.js'
 import { SIDEBAR_ITEMS } from '../../config/constants.js'
 import { statusBadge } from '../../utils/helpers.js'
+import { initTareasModule } from '../tareas.js'
 import Swal from 'sweetalert2'
 
 let currentSection = 'dashboard'
@@ -1112,8 +1113,54 @@ function bindReportesEvents() {
 }
 
 function renderTareas() {
-  const item = SIDEBAR_ITEMS.find(s => s.id === 'tareas')
-  return renderPlaceholder('Tareas del Reclutador', 'Organiza y da seguimiento a las tareas del equipo.', item?.icon || '')
+  return `
+<div class="tasks-container">
+  <!-- Header principal -->
+  <header class="tasks-header">
+    <div>
+      <h1 class="tasks-title">Tareas del Reclutador</h1>
+      <p class="tasks-subtitle">Organiza y da seguimiento a las tareas operativas e internas del equipo.</p>
+    </div>
+    <div class="header-actions">
+      <div class="filter-group">
+        <button class="btn-filter active" data-filter="all">Todas</button>
+        <button class="btn-filter" data-filter="high">Alta Prioridad</button>
+        <button class="btn-filter" data-filter="overdue">Vencidas</button>
+      </div>
+      <button class="btn-primary" id="btn-nueva-tarea">
+        <span class="icon">+</span> Nueva Tarea
+      </button>
+    </div>
+  </header>
+
+  <!-- Grid de columnas (Mis Tareas vs Queue de Equipo) -->
+  <div class="tasks-grid">
+    <!-- Columna: Mis Tareas -->
+    <section class="task-column">
+      <div class="column-header">
+        <span class="status-dot green"></span>
+        <h2>Mis Tareas</h2>
+        <span class="task-count" id="count-mis-tareas">0</span>
+      </div>
+      <div class="cards-list" id="list-mis-tareas">
+        <!-- Renderizado dinámico mediante JS -->
+      </div>
+    </section>
+
+    <!-- Columna: Queue del Equipo -->
+    <section class="task-column">
+      <div class="column-header">
+        <span class="status-dot blue"></span>
+        <h2>Team Queue</h2>
+        <span class="task-count" id="count-team-queue">0</span>
+      </div>
+      <div class="cards-list" id="list-team-queue">
+        <!-- Renderizado dinámico mediante JS -->
+      </div>
+    </section>
+  </div>
+</div>
+  `
 }
 
 function renderPlaceholder(title, description, icon) {
@@ -1155,6 +1202,10 @@ function reRender() {
 
   if (currentSection === 'reportes') {
     bindReportesEvents()
+  }
+
+  if (currentSection === 'tareas') {
+    initTareasModule()
   }
 }
 
