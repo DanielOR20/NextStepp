@@ -453,20 +453,7 @@ function renderPostulacionesTable() {
       </div>
     </div>
 
-    <div id="postToastContainer" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;"></div>
   `
-}
-
-function postToast(msg, type = 'success') {
-  const container = document.getElementById('postToastContainer')
-  if (!container) return
-  const t = document.createElement('div')
-  const colors = { success: 'var(--success)', error: 'var(--danger)', info: 'var(--accent)' }
-  t.style.cssText = `padding:.75rem 1rem;border-radius:var(--radius-sm);background:var(--card);border:1px solid ${colors[type] || colors.info};color:var(--text-primary);font-size:.85rem;box-shadow:var(--shadow-md);opacity:0;transition:opacity .3s;`
-  t.textContent = msg
-  container.appendChild(t)
-  requestAnimationFrame(() => t.style.opacity = '1')
-  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300) }, 3000)
 }
 
 function bindPostulacionesEvents() {

@@ -10,25 +10,6 @@ const app = document.getElementById('app')
 app.innerHTML = `
   <section class="profile-section" style="padding-top: 80px;">
     <div class="profile-card">
-      <div class="profile-info">
-        <div class="overline" style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent-light);margin-bottom:0.75rem;">Tu Perfil Profesional</div>
-        <h2>Crea tu perfil y recibe ofertas personalizadas</h2>
-        <p>Regístrate con tu información profesional y nuestra inteligencia artificial encontrará las mejores oportunidades laborales adaptadas a tu experiencia, habilidades y preferencias.</p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <div style="background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 16px;text-align:center;">
-            <div style="font-size:1.5rem;font-weight:800;color:var(--accent-light);">92%</div>
-            <div style="font-size:0.75rem;color:var(--text-muted);">Match Promedio</div>
-          </div>
-          <div style="background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 16px;text-align:center;">
-            <div style="font-size:1.5rem;font-weight:800;color:var(--success);">3.2x</div>
-            <div style="font-size:0.75rem;color:var(--text-muted);">Más Ofertas</div>
-          </div>
-          <div style="background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 16px;text-align:center;">
-            <div style="font-size:1.5rem;font-weight:800;color:var(--warning);">48h</div>
-            <div style="font-size:0.75rem;color:var(--text-muted);">Tiempo Promedio</div>
-          </div>
-        </div>
-      </div>
       <form class="profile-form" id="profileForm" onsubmit="return false;">
         <div class="form-row">
           <div class="form-group">

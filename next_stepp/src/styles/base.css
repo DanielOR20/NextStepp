@@ -210,15 +210,6 @@ body {
   border-radius: var(--radius-md);
 }
 
-.mobile-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
 /* ===================== HERO ===================== */
 .hero-section {
   min-height: 100vh;
@@ -1580,10 +1571,6 @@ body {
   padding-top: 90px;
 }
 
-.top-panel-mobile-menu {
-  display: none;
-}
-
 /* ===================== NAVBAR (Floating) ===================== */
 .navbar {
   position: fixed;
@@ -1971,48 +1958,6 @@ body {
 
   .top-panel-actions .btn:not(.top-panel-mobile-toggle) {
     display: none;
-  }
-
-  .top-panel-mobile-menu {
-    display: none;
-    position: fixed;
-    top: 64px;
-    left: 0;
-    width: 100%;
-    background: rgba(11, 15, 25, 0.98);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem;
-    z-index: 1099;
-  }
-
-  .top-panel-mobile-menu.open {
-    display: block;
-  }
-
-  .top-panel-mobile-menu .sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .top-panel-mobile-menu .sidebar-nav a {
-    padding: 12px 16px;
-    font-size: 0.95rem;
-  }
-
-  .navbar-nav.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 72px;
-    left: 0;
-    width: 100%;
-    background: rgba(11, 15, 25, 0.98);
-    backdrop-filter: blur(20px);
-    padding: 1rem 2rem;
-    border-bottom: 1px solid var(--border);
-    gap: 1rem;
   }
 
   .search-row {
