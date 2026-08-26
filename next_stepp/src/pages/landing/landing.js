@@ -1,171 +1,19 @@
-import { navigate } from '../router.js'
-import { getCurrentUser } from '../auth.js'
-
-const jobOffers = [
-  {
-    id: 1,
-    title: 'Desarrollador Full Stack Senior',
-    company: 'TechNova Solutions',
-    logo: 'TN',
-    logoColor: '#6366f1',
-    description: 'Buscamos un desarrollador full stack con experiencia en React, Node.js y bases de datos PostgreSQL para liderar proyectos de innovación tecnológica.',
-    tags: ['React', 'Node.js', 'PostgreSQL', 'TypeScript'],
-    salary: '$3,200 - $4,800',
-    location: 'Ciudad de México, MX',
-    badge: 'new',
-    remote: true,
-  },
-  {
-    id: 2,
-    title: 'UX/UI Designer',
-    company: 'CreativeHub Digital',
-    logo: 'CH',
-    logoColor: '#06b6d4',
-    description: 'Diseñador de experiencias de usuario con enfoque en productos digitales. Crearemos interfaces intuitivas y visualmente impactantes.',
-    tags: ['Figma', 'UI/UX', 'Prototipado', 'Design System'],
-    salary: '$2,400 - $3,600',
-    location: 'Remoto',
-    badge: 'urgent',
-    remote: true,
-  },
-  {
-    id: 3,
-    title: 'Data Scientist',
-    company: 'DataMind Analytics',
-    logo: 'DM',
-    logoColor: '#8b5cf6',
-    description: 'Únete a nuestro equipo de ciencia de datos para construir modelos de machine learning que transformen la toma de decisiones empresariales.',
-    tags: ['Python', 'ML', 'TensorFlow', 'SQL'],
-    salary: '$3,800 - $5,500',
-    location: 'Guadalajara, MX',
-    badge: 'new',
-    remote: false,
-  },
-  {
-    id: 4,
-    title: 'DevOps Engineer',
-    company: 'CloudScale Inc.',
-    logo: 'CS',
-    logoColor: '#10b981',
-    description: 'Ingeniero DevOps para automatizar y optimizar nuestra infraestructura cloud. Experiencia con Kubernetes y CI/CD requerida.',
-    tags: ['AWS', 'Kubernetes', 'Docker', 'Terraform'],
-    salary: '$3,500 - $5,000',
-    location: 'Monterrey, MX',
-    badge: 'urgent',
-    remote: true,
-  },
-  {
-    id: 5,
-    title: 'Product Manager',
-    company: 'InnovateTech',
-    logo: 'IT',
-    logoColor: '#f59e0b',
-    description: 'Lidera el ciclo de vida de productos digitales desde la concepción hasta el lanzamiento. Trabaja con equipos ágiles.',
-    tags: ['Agile', 'Scrum', 'Roadmap', 'Analytics'],
-    salary: '$3,000 - $4,500',
-    location: 'Ciudad de México, MX',
-    badge: 'new',
-    remote: false,
-  },
-  {
-    id: 6,
-    title: 'Mobile Developer',
-    company: 'AppForge Labs',
-    logo: 'AF',
-    logoColor: '#ec4899',
-    description: 'Desarrolla aplicaciones móviles multiplataforma con React Native. Experiencia en publicación en App Store y Google Play.',
-    tags: ['React Native', 'iOS', 'Android', 'Firebase'],
-    salary: '$2,800 - $4,200',
-    location: 'Remoto',
-    badge: 'new',
-    remote: true,
-  },
-]
-
-const ratings = [
-  {
-    name: 'María García',
-    initials: 'MG',
-    role: 'Frontend Developer',
-    percentage: 92,
-    stars: 5,
-    text: 'Excelente plataforma. Encontré mi empleo ideal en menos de 2 semanas. El sistema de perfil profesional es muy completo.',
-  },
-  {
-    name: 'Carlos Hernández',
-    initials: 'CH',
-    role: 'Data Analyst',
-    percentage: 87,
-    stars: 4,
-    text: 'La IA me ayudó a mejorar mi CV significativamente. Las ofertas que recibo son muy relevantes a mi perfil.',
-  },
-  {
-    name: 'Ana López',
-    initials: 'AL',
-    role: 'UX Designer',
-    percentage: 95,
-    stars: 5,
-    text: 'Plataforma innovadora. El proceso de registro es sencillo y las recomendaciones de empleo son precisas.',
-  },
-  {
-    name: 'Roberto Martínez',
-    initials: 'RM',
-    role: 'DevOps Engineer',
-    percentage: 89,
-    stars: 4,
-    text: 'Muy buena experiencia. El buscador de empleos por palabra clave encuentra exactamente lo que busco.',
-  },
-  {
-    name: 'Laura Sánchez',
-    initials: 'LS',
-    role: 'Product Manager',
-    percentage: 94,
-    stars: 5,
-    text: 'El generador de CV con IA es increíble. Ahorré muchísimo tiempo y el resultado es profesional.',
-  },
-  {
-    name: 'Diego Torres',
-    initials: 'DT',
-    role: 'Full Stack Developer',
-    percentage: 91,
-    stars: 5,
-    text: 'Las calificaciones por porcentaje me dieron una visión clara de mis áreas de mejora. Totalmente recomendado.',
-  },
-]
-
-const suggestedTags = [
-  'Desarrollador', 'React', 'Python', 'Remoto', 'Full Stack',
-  'Diseñador UX', 'Data Science', 'DevOps', 'Cloud', 'Figma',
-]
-
-const icons = {
-  search: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
-  location: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
-  briefcase: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
-  star: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
-  starEmpty: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
-  send: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
-  menu: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
-  close: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
-  ai: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93"/><path d="M8.56 9.8A4 4 0 1 1 15.43 12"/><circle cx="12" cy="16" r="1"/><path d="M2 16c0-2.5 4-4 10-4s10 1.5 10 4"/></svg>`,
-  doc: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
-}
-
-function renderStars(count) {
-  let html = '<div class="rating-stars">'
-  for (let i = 0; i < 5; i++) {
-    html += `<span class="star ${i < count ? '' : 'empty'}">${i < count ? icons.star : icons.starEmpty}</span>`
-  }
-  html += '</div>'
-  return html
-}
+import { navigate } from '../../router/router.js'
+import { getCurrentUser } from '../../services/auth.service.js'
+import { getJobOffers, getRatings, getSuggestedTags, getAiResponses } from '../../services/store.service.js'
+import { ICONS } from '../../config/constants.js'
+import { renderStars } from '../../utils/helpers.js'
 
 export function renderLanding() {
   const user = getCurrentUser()
   const app = document.getElementById('app')
 
+  const jobOffers = getJobOffers()
+  const ratings = getRatings()
+  const suggestedTags = getSuggestedTags()
+
   const navLinks = user
-    ? `<li><a href="#${user.role === 'admin' ? '/admin/dashboard' : '/empresa/dashboard'}">Mi Panel</a></li>`
+    ? `<li><a href="#${user.role === 'admin' ? '/admin/dashboard' : '/empresas-clientes'}">Mi Panel</a></li>`
     : ''
 
   const authBtn = user
@@ -184,12 +32,12 @@ export function renderLanding() {
           <li><a href="#empleos">Empleos</a></li>
           <li><a href="#calificaciones">Calificaciones</a></li>
           <li><a href="#ia">Asistente IA</a></li>
-          <li><a href="#/postulaciones">Postulaciones</a></li>
+          <li><a href="perfil.html">Mi Perfil</a></li>
           ${navLinks}
         </ul>
         <div class="navbar-actions">
           ${authBtn}
-          <button class="mobile-toggle" id="mobileToggle">${icons.menu}</button>
+          <button class="mobile-toggle" id="mobileToggle">${ICONS.menu}</button>
         </div>
       </div>
     </nav>
@@ -207,10 +55,10 @@ export function renderLanding() {
       </p>
       <div class="hero-actions">
         <button class="btn btn-primary btn-lg" onclick="document.querySelector('#empleos')?.scrollIntoView({ behavior: 'smooth' })">
-          ${icons.briefcase} Explorar Empleos
+          ${ICONS.briefcase} Explorar Empleos
         </button>
         <button class="btn btn-outline btn-lg" onclick="document.querySelector('#perfil')?.scrollIntoView({ behavior: 'smooth' })">
-          ${icons.doc} Crear Mi CV
+          ${ICONS.doc} Crear Mi CV
         </button>
       </div>
       <div class="hero-stats">
@@ -237,16 +85,16 @@ export function renderLanding() {
       <div class="search-container">
         <div class="search-row">
           <div class="search-input-group">
-            ${icons.search}
+            ${ICONS.search}
             <input type="text" id="searchKeyword" placeholder="Buscar empleo por palabra clave..." />
           </div>
           <div class="search-divider"></div>
           <div class="search-input-group">
-            ${icons.location}
+            ${ICONS.location}
             <input type="text" id="searchLocation" placeholder="Ubicación" />
           </div>
           <button class="btn btn-primary btn-lg" id="searchBtn">
-            ${icons.search} Buscar
+            ${ICONS.search} Buscar
           </button>
         </div>
         <div class="search-tags" id="searchTags">
@@ -277,7 +125,7 @@ export function renderLanding() {
             <div class="job-card-footer">
               <span class="job-salary">${job.salary}</span>
               <span class="job-location">
-                ${icons.location} ${job.location}
+                ${ICONS.location} ${job.location}
               </span>
             </div>
           </div>
@@ -293,22 +141,22 @@ export function renderLanding() {
       </div>
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">${icons.ai}</div>
+          <div class="feature-icon">${ICONS.ai}</div>
           <h3>IA Inteligente</h3>
-          <p>Asistente potenciado por Groq que analiza tu perfil y te recomienda las mejores oportunidades laborales.</p>
+          <p>Asistente potenciado por IA que analiza tu perfil y te recomienda las mejores oportunidades laborales.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">${icons.doc}</div>
+          <div class="feature-icon">${ICONS.doc}</div>
           <h3>Generador de CV</h3>
           <p>Crea un CV profesional con nuestra herramienta de IA que destaca tus habilidades y experiencia.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">${icons.search}</div>
+          <div class="feature-icon">${ICONS.search}</div>
           <h3>Búsqueda Avanzada</h3>
           <p>Encuentra empleos por palabra clave, ubicación, empresa o habilidades específicas.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">${icons.star}</div>
+          <div class="feature-icon">${ICONS.star}</div>
           <h3>Calificación Profesional</h3>
           <p>Sistema de evaluación por porcentaje que muestra tu nivel de competencia y áreas de mejora.</p>
         </div>
@@ -403,7 +251,7 @@ export function renderLanding() {
             <input class="form-input" type="text" placeholder="React, Node.js, Python, SQL..." />
           </div>
           <button class="btn btn-primary btn-lg" type="submit" style="width:100%;">
-            ${icons.briefcase} Crear Perfil y Recibir Ofertas
+            ${ICONS.briefcase} Crear Perfil y Recibir Ofertas
           </button>
         </form>
       </div>
@@ -414,7 +262,7 @@ export function renderLanding() {
         <h2>Genera tu CV Profesional con IA</h2>
         <p>Nuestra inteligencia artificial analizará tu perfil y creará un CV que destaque ante los reclutadores.</p>
         <button class="btn btn-lg" onclick="document.querySelector('#perfil')?.scrollIntoView({ behavior: 'smooth' })">
-          ${icons.doc} Crear Mi CV Ahora
+          ${ICONS.doc} Crear Mi CV Ahora
         </button>
       </div>
     </section>
@@ -423,11 +271,11 @@ export function renderLanding() {
       <div class="section-header">
         <div class="overline">Asistente IA</div>
         <h2>Consulta con nuestro asistente inteligente</h2>
-        <p>Pregunta sobre empleos, mejora tu CV o recibe orientación profesional. Potenciado por Groq AI.</p>
+        <p>Pregunta sobre empleos, mejora tu CV o recibe orientación profesional.</p>
       </div>
       <div class="ai-chat-container">
         <div class="ai-chat-header">
-          <div class="ai-avatar">${icons.ai}</div>
+          <div class="ai-avatar">${ICONS.ai}</div>
           <div>
             <h3>NextStepp AI</h3>
             <p>Asistente de empleabilidad</p>
@@ -439,7 +287,7 @@ export function renderLanding() {
         </div>
         <div class="ai-chat-body" id="chatBody">
           <div class="ai-message bot">
-            <div class="ai-message-avatar">${icons.ai}</div>
+            <div class="ai-message-avatar">${ICONS.ai}</div>
             <div class="ai-message-bubble">
               ¡Hola! Soy el asistente de NextStepp. Puedo ayudarte a encontrar empleos, mejorar tu CV o responder preguntas sobre oportunidades laborales. ¿En qué puedo ayudarte hoy?
             </div>
@@ -447,7 +295,7 @@ export function renderLanding() {
         </div>
         <div class="ai-chat-input">
           <input type="text" id="chatInput" placeholder="Escribe tu pregunta sobre empleos..." />
-          <button id="chatSend">${icons.send} Enviar</button>
+          <button id="chatSend">${ICONS.send} Enviar</button>
         </div>
       </div>
     </section>
@@ -508,7 +356,7 @@ export function renderLanding() {
     </footer>
   `
 
-  setupLandingEvents()
+  setupLandingEvents(jobOffers)
   animateRatingBars()
 }
 
@@ -526,7 +374,7 @@ function animateRatingBars() {
   document.querySelectorAll('.rating-bar-fill').forEach(bar => observer.observe(bar))
 }
 
-function setupLandingEvents() {
+function setupLandingEvents(jobOffers) {
   const navbar = document.getElementById('navbar')
   const mobileToggle = document.getElementById('mobileToggle')
   const navMenu = document.getElementById('navMenu')
@@ -546,7 +394,7 @@ function setupLandingEvents() {
   if (profileBtn) {
     profileBtn.addEventListener('click', () => {
       const user = getCurrentUser()
-      navigate(user.role === 'admin' ? '/admin/dashboard' : '/empresa/dashboard')
+      navigate(user.role === 'admin' ? '/admin/dashboard' : '/empresas-clientes')
     })
   }
 
@@ -557,7 +405,7 @@ function setupLandingEvents() {
   if (mobileToggle) {
     mobileToggle.addEventListener('click', () => {
       navMenu.classList.toggle('open')
-      mobileToggle.innerHTML = navMenu.classList.contains('open') ? icons.close : icons.menu
+      mobileToggle.innerHTML = navMenu.classList.contains('open') ? ICONS.close : ICONS.menu
     })
   }
 
@@ -591,21 +439,13 @@ function setupLandingEvents() {
     if (e.key === 'Enter') searchBtn.click()
   })
 
-  const aiResponses = [
-    'Basándome en tu perfil, te recomiendo explorar las ofertas de desarrollo full stack. Hay una alta demanda en este sector.',
-    'Para mejorar tu CV, asegúrate de destacar logros cuantificables en cada posición. Por ejemplo: "Incrementé la eficiencia en un 40%".',
-    'Las habilidades más solicitadas actualmente son: React, Python, Cloud Computing y Machine Learning. Te sugiero enfocarte en al menos dos de ellas.',
-    'El mercado laboral tech está muy activo. El tiempo promedio de contratación para perfiles senior es de 2-3 semanas.',
-    'Te recomiendo crear un portafolio en línea que muestre tus proyectos. Los reclutadores valoran mucho ver ejemplos de trabajo prácticos.',
-    'Las empresas buscan cada vez más perfiles híbridos. Combinar habilidades técnicas con soft skills como liderazgo y comunicación es clave.',
-  ]
-
+  const aiResponses = getAiResponses()
   let responseIndex = 0
 
   function addMessage(text, type) {
     const msgDiv = document.createElement('div')
     msgDiv.className = `ai-message ${type}`
-    const avatar = type === 'bot' ? icons.ai : '👤'
+    const avatar = type === 'bot' ? ICONS.ai : '👤'
     msgDiv.innerHTML = `
       <div class="ai-message-avatar">${avatar}</div>
       <div class="ai-message-bubble">${text}</div>
