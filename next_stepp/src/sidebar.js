@@ -4,6 +4,7 @@ const navItems = [
   { label: 'Inicio', href: '/inicio.html', id: 'inicio' },
   { label: 'Mi Perfil', href: '/perfil.html', id: 'perfil' },
   { label: 'Empleos', href: '/empleos.html', id: 'empleos' },
+  { label: 'Postulaciones', href: '/src/pages/postulaciones/postulaciones.html', id: 'postulaciones' },
   { label: 'Calificaciones', href: '/calificaciones.html', id: 'calificaciones' },
   { label: 'Asistente IA', href: '/ia.html', id: 'ia' },
 ]
