@@ -1,4 +1,5 @@
 import { icons } from './icons.js'
+import { login, getCurrentUser } from './services/auth.service.js'
 
 const navItems = [
   { label: 'Inicio', href: 'inicio.html', id: 'inicio' },
@@ -9,6 +10,11 @@ const navItems = [
 ]
 
 export function renderTopPanel(activePage) {
+  const user = getCurrentUser()
+  const panelHref = user?.role === 'admin'
+    ? 'index.html#/admin/dashboard'
+    : 'index.html#/empresas-clientes'
+
   return `
     <nav class="navbar" id="navbar">
       <div class="navbar-inner">
@@ -19,15 +25,17 @@ export function renderTopPanel(activePage) {
         <ul class="navbar-nav" id="navMenu">
           ${navItems.map(item => `
             <li>
-              <a href="${item.href}" ${item.id === activePage ? 'class="active"' : ''} ${item.highlight ? 'style="color: var(--accent-light); font-weight: 600;"' : ''}>
+              <a href="${item.href}" ${item.id === activePage ? 'class="active"' : ''}>
                 ${item.label}
               </a>
             </li>
           `).join('')}
         </ul>
         <div class="navbar-actions">
-          <button class="btn btn-outline" id="loginPanelBtn" style="display:none;">Iniciar Sesión</button>
-          <button class="mobile-toggle" id="mobileToggle">${icons.menu}</button>
+          ${user
+            ? `<a class="btn btn-outline" href="${panelHref}">Mi Panel</a>`
+            : '<button class="btn btn-outline" id="loginPanelBtn" type="button">Iniciar Sesion</button>'}
+          <button class="mobile-toggle" id="mobileToggle" type="button">${icons.menu}</button>
         </div>
       </div>
     </nav>
@@ -55,28 +63,29 @@ export function setupTopPanel() {
 
 export function renderLoginModal() {
   return `
-    <div class="modal-overlay" id="loginModal">
-      <div class="modal-window" style="max-width:420px;">
+    <div class="modal-overlay" id="loginModal" aria-hidden="true">
+      <div class="modal-window" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
         <div class="modal-win-header">
-          <div class="win-title">Iniciar Sesión</div>
-          <button class="win-close" id="closeLoginModal">✕</button>
+          <div class="win-title" id="loginModalTitle">Iniciar Sesion</div>
+          <button class="win-close" id="closeLoginModal" type="button" aria-label="Cerrar">x</button>
         </div>
         <div class="modal-win-body">
           <form id="inlineLoginForm">
             <div class="win-form-group">
               <label for="inlineEmail">Usuario / Email</label>
-              <input type="text" id="inlineEmail" class="sys-input" placeholder="tu@email.com" required />
+              <input type="text" id="inlineEmail" class="sys-input" placeholder="tu@email.com" autocomplete="username" required />
             </div>
             <div class="win-form-group">
-              <label for="inlinePassword">Contraseña</label>
-              <input type="password" id="inlinePassword" class="sys-input" placeholder="••••••••" required />
+              <label for="inlinePassword">Contrasena</label>
+              <input type="password" id="inlinePassword" class="sys-input" placeholder="********" autocomplete="current-password" required />
             </div>
             <div class="modal-win-footer">
               <button type="button" class="btn-tool" id="cancelLoginModal">Cancelar</button>
               <button type="submit" class="btn-tool btn-tool-blue">Entrar</button>
             </div>
-            <p style="text-align:center;margin-top:12px;font-size:0.85rem;color:var(--text-muted);">
-              ¿No tienes cuenta? <a href="#/register" style="color:var(--accent-light);">Regístrate</a>
+            <p class="auth-error" id="inlineLoginError" aria-live="polite"></p>
+            <p class="modal-register-text">
+              No tienes cuenta? <a href="index.html#/register" class="modal-link">Registrate</a>
             </p>
           </form>
         </div>
@@ -91,33 +100,53 @@ export function setupLoginModal() {
   const closeBtn = document.getElementById('closeLoginModal')
   const cancelBtn = document.getElementById('cancelLoginModal')
   const form = document.getElementById('inlineLoginForm')
+  const errorEl = document.getElementById('inlineLoginError')
 
-  if (loginBtn) {
+  const closeModal = () => {
+    modal?.classList.remove('active')
+    modal?.setAttribute('aria-hidden', 'true')
+    document.body.style.overflow = ''
+    if (errorEl) {
+      errorEl.textContent = ''
+      errorEl.classList.remove('visible')
+    }
+  }
+
+  if (loginBtn && modal) {
     loginBtn.addEventListener('click', () => {
       modal.classList.add('active')
+      modal.setAttribute('aria-hidden', 'false')
+      document.body.style.overflow = 'hidden'
+      document.getElementById('inlineEmail')?.focus()
     })
   }
 
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => modal.classList.remove('active'))
-  }
+  closeBtn?.addEventListener('click', closeModal)
+  cancelBtn?.addEventListener('click', closeModal)
 
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', () => modal.classList.remove('active'))
-  }
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal()
+  })
 
-  if (modal) {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.classList.remove('active')
-    })
-  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) closeModal()
+  })
 
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault()
-      window.location.href = '/index.html#/login'
-    })
-  }
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const email = document.getElementById('inlineEmail').value.trim()
+    const password = document.getElementById('inlinePassword').value.trim()
+    const result = login(email, password)
+
+    if (!result.success) {
+      errorEl.textContent = result.error
+      errorEl.classList.add('visible')
+      return
+    }
+
+    const target = result.user.role === 'admin' ? '/admin/dashboard' : '/empresas-clientes'
+    window.location.href = `index.html#${target}`
+  })
 }
 
 export function renderFooter() {
@@ -143,35 +172,35 @@ export function renderFooter() {
             <ul>
               <li><a href="empleos.html">Buscar Empleos</a></li>
               <li><a href="perfil.html">Crear Perfil</a></li>
-              <li><a href="#">Generar CV</a></li>
+              <li><a href="perfil.html">Generar CV</a></li>
               <li><a href="ia.html">Asistente IA</a></li>
             </ul>
           </div>
           <div class="footer-col">
             <h4>Empresa</h4>
             <ul>
-              <li><a href="#">Sobre Nosotros</a></li>
-              <li><a href="#">Publicar Empleo</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">Carreras</a></li>
+              <li><a href="inicio.html">Sobre Nosotros</a></li>
+              <li><a href="index.html#/login">Publicar Empleo</a></li>
+              <li><a href="inicio.html">Blog</a></li>
+              <li><a href="empleos.html">Carreras</a></li>
             </ul>
           </div>
           <div class="footer-col">
             <h4>Contacto</h4>
             <ul>
               <li><a href="mailto:info@nextstepp.com">info@nextstepp.com</a></li>
-              <li><a href="tel:+525555555555">+52 55 5555 5555</a></li>
-              <li><a href="#">Ciudad de México, MX</a></li>
-              <li><a href="#">Soporte 24/7</a></li>
+              <li><a href="tel:+50655555555">+506 5555 5555</a></li>
+              <li><a href="https://www.google.com/maps/search/San+Jose+Costa+Rica" target="_blank" rel="noreferrer">San Jose, Costa Rica</a></li>
+              <li><a href="mailto:soporte@nextstepp.com">Soporte</a></li>
             </ul>
           </div>
         </div>
         <div class="footer-bottom">
           <span>&copy; 2026 NextStepp. Todos los derechos reservados.</span>
           <span>
-            <a href="#" style="color:var(--text-muted);text-decoration:none;">Privacidad</a> &middot;
-            <a href="#" style="color:var(--text-muted);text-decoration:none;">Términos</a> &middot;
-            <a href="#" style="color:var(--text-muted);text-decoration:none;">Cookies</a>
+            <a href="inicio.html" style="color:var(--text-muted);text-decoration:none;">Privacidad</a> &middot;
+            <a href="inicio.html" style="color:var(--text-muted);text-decoration:none;">Terminos</a> &middot;
+            <a href="inicio.html" style="color:var(--text-muted);text-decoration:none;">Cookies</a>
           </span>
         </div>
       </div>
