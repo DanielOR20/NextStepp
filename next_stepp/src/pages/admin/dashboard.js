@@ -46,6 +46,7 @@ const MODULE_RENDERERS = {
   empresas: renderEmpresas,
   postulaciones: renderPostulaciones,
   entrevistas: renderEntrevistas,
+  reportes: renderReportes,
   tareas: renderTareas,
 }
 
@@ -106,6 +107,7 @@ function renderDashboard() {
     { id: 'empresas', title: 'Empresas Clientes', desc: 'Verifica y aprueba empresas registradas.', color: '#06b6d4', count: companies.length, badge: pendingC > 0 ? `${pendingC} pendientes` : null },
     { id: 'postulaciones', title: 'Postulaciones', desc: 'Gestiona postulaciones de candidatos.', color: '#10b981', count: 0, badge: null },
     { id: 'entrevistas', title: 'Entrevistas / Notas', desc: 'Programa entrevistas y registra notas.', color: '#f59e0b', count: 0, badge: null },
+    { id: 'reportes', title: 'Reportes', desc: 'Analiza KPIs, rankings y estados del proceso.', color: '#8b5cf6', count: 4, badge: 'Nuevo' },
     { id: 'tareas', title: 'Tareas del Reclutador', desc: 'Organiza tareas del equipo de reclutamiento.', color: '#ec4899', count: 0, badge: null },
   ]
 
@@ -595,9 +597,402 @@ async function loadPostulacionesData() {
   }
 }
 
+const DEFAULT_ENTREVISTAS = [
+  {
+    id: 1,
+    candidato: 'Maria Gonzalez',
+    vacante: 'Desarrollador Frontend Junior',
+    empresa: 'Tech Solutions CR',
+    reclutador: 'Daniel Ortega',
+    fecha: '2026-08-25',
+    hora: '10:00 a.m.',
+    modalidad: 'Virtual',
+    estado: 'Programada',
+    tec: 2,
+    com: 5,
+    exp: 3,
+    adap: 5,
+    obs: 'Candidata con buen potencial tecnico y excelente adaptacion.',
+    resultado: 'En espera / Por decidir',
+  },
+  {
+    id: 2,
+    candidato: 'Maria Gonzalez',
+    vacante: 'Desarrollador Frontend Junior',
+    empresa: 'Tech Solutions CR',
+    reclutador: 'Daniel Ortega',
+    fecha: '2026-08-20',
+    hora: '02:00 p.m.',
+    modalidad: 'Presencial',
+    estado: 'Finalizada',
+    tec: 4,
+    com: 4,
+    exp: 4,
+    adap: 4,
+    obs: 'Muy buena entrevista tecnica inicial.',
+    resultado: 'Aprobada - Avanza de etapa',
+  },
+  {
+    id: 3,
+    candidato: 'Carlos Perez',
+    vacante: 'Soporte TI',
+    empresa: 'Global Tech',
+    reclutador: 'Laura Vargas',
+    fecha: '2026-08-15',
+    hora: '11:00 a.m.',
+    modalidad: 'Virtual',
+    estado: 'Finalizada',
+    tec: 3,
+    com: 3,
+    exp: 3,
+    adap: 3,
+    obs: 'Falto profundidad en redes.',
+    resultado: 'Rechazada',
+  },
+]
+
+let entrevistasData = null
+let entrevistaActivaId = null
+let entrevistasFiltroFecha = ''
+
+function getEntrevistasData() {
+  if (!entrevistasData) {
+    const stored = localStorage.getItem('nextstepp_entrevistas_v2')
+    entrevistasData = stored ? JSON.parse(stored) : [...DEFAULT_ENTREVISTAS]
+  }
+  if (!entrevistaActivaId && entrevistasData.length > 0) entrevistaActivaId = entrevistasData[0].id
+  return entrevistasData
+}
+
+function saveEntrevistasData() {
+  localStorage.setItem('nextstepp_entrevistas_v2', JSON.stringify(entrevistasData))
+}
+
+function formatInterviewDate(date) {
+  if (!date) return ''
+  const [year, month, day] = date.split('-')
+  return day && month && year ? `${day}/${month}/${year}` : date
+}
+
+function interviewBadge(result) {
+  if (result?.includes('Aprobada')) return '<span class="status-badge status-approved">Aprobada</span>'
+  if (result?.includes('Rechazada') || result?.includes('Cancelada')) return '<span class="status-badge status-rejected">Rechazada</span>'
+  return '<span class="status-badge status-pending">Pendiente</span>'
+}
+
+function getActiveInterview() {
+  return getEntrevistasData().find(e => e.id === entrevistaActivaId) || getEntrevistasData()[0]
+}
+
 function renderEntrevistas() {
-  const item = SIDEBAR_ITEMS.find(s => s.id === 'entrevistas')
-  return renderPlaceholder('Entrevistas / Notas', 'Programa entrevistas y registra notas de seguimiento.', item?.icon || '')
+  const entrevistas = getEntrevistasData()
+  const active = getActiveInterview()
+  const filtered = entrevistasFiltroFecha ? entrevistas.filter(e => e.fecha === entrevistasFiltroFecha) : entrevistas
+
+  return `
+    <header class="dashboard-header">
+      <div><h1>Entrevistas / Notas</h1><p>Programa entrevistas, evalua candidatos y consulta el historial.</p></div>
+      <button class="btn btn-success" id="newInterviewBtn">+ Nueva Entrevista</button>
+    </header>
+
+    <div class="interview-grid">
+      <section class="dashboard-card interview-detail">
+        <h2>Detalle de la entrevista</h2>
+        <div class="review-info-grid">
+          <div><span class="label">Candidato:</span> <strong>${active?.candidato || '-'}</strong></div>
+          <div><span class="label">Vacante:</span> ${active?.vacante || '-'}</div>
+          <div><span class="label">Empresa:</span> ${active?.empresa || '-'}</div>
+          <div><span class="label">Reclutador:</span> ${active?.reclutador || '-'}</div>
+          <div><span class="label">Fecha:</span> ${formatInterviewDate(active?.fecha)}</div>
+          <div><span class="label">Hora:</span> ${active?.hora || '-'}</div>
+          <div><span class="label">Modalidad:</span> ${active?.modalidad || '-'}</div>
+          <div><span class="label">Estado:</span> ${active?.estado || '-'}</div>
+        </div>
+        <div class="review-card-actions compact-actions">
+          <button class="btn btn-danger" id="cancelInterviewBtn">Cancelar</button>
+          <button class="btn btn-outline" id="changeInterviewDateBtn">Cambiar Fecha</button>
+        </div>
+      </section>
+
+      <section class="dashboard-card">
+        <h2>Evaluacion de la entrevista</h2>
+        <form id="interviewEvalForm" class="admin-form">
+          <div class="form-row">
+            <div class="form-group"><label>Conocimientos tecnicos</label><input class="form-input" type="number" min="1" max="5" id="evalTec" value="${active?.tec || 3}" required /></div>
+            <div class="form-group"><label>Comunicacion</label><input class="form-input" type="number" min="1" max="5" id="evalCom" value="${active?.com || 3}" required /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Experiencia</label><input class="form-input" type="number" min="1" max="5" id="evalExp" value="${active?.exp || 3}" required /></div>
+            <div class="form-group"><label>Adaptabilidad</label><input class="form-input" type="number" min="1" max="5" id="evalAdap" value="${active?.adap || 3}" required /></div>
+          </div>
+          <div class="form-group"><label>Observaciones generales</label><textarea class="form-input form-textarea" id="evalObs">${active?.obs || ''}</textarea></div>
+          <div class="form-group">
+            <label>Resultado final</label>
+            <select class="form-input" id="evalResultado">
+              ${['En espera / Por decidir', 'Aprobada - Avanza de etapa', 'Rechazada', 'Cancelada - No realizada'].map(result => `<option value="${result}" ${active?.resultado === result ? 'selected' : ''}>${result}</option>`).join('')}
+            </select>
+          </div>
+          <button class="btn btn-primary" type="submit">Guardar evaluacion</button>
+        </form>
+      </section>
+    </div>
+
+    <section class="dashboard-card">
+      <div class="section-actions">
+        <h2>Historial de entrevistas</h2>
+        <div class="inline-filters">
+          <input class="form-input" type="date" id="interviewDateFilter" value="${entrevistasFiltroFecha}" />
+          <button class="btn btn-outline" id="clearInterviewFilter">Limpiar</button>
+        </div>
+      </div>
+      <div class="client-table-container">
+        <table class="client-table">
+          <thead><tr><th>Candidato</th><th>Vacante / Empresa</th><th>Fecha</th><th>Modalidad</th><th>Resultado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            ${filtered.length === 0 ? '<tr><td colspan="6" class="empty-text">No se encontraron entrevistas.</td></tr>' : filtered.map(ent => `
+              <tr class="${ent.id === entrevistaActivaId ? 'active-table-row' : ''}">
+                <td><strong>${ent.candidato}</strong><br><span class="muted-text">${ent.reclutador}</span></td>
+                <td>${ent.vacante}<br><span class="muted-text">${ent.empresa}</span></td>
+                <td>${formatInterviewDate(ent.fecha)}<br><span class="muted-text">${ent.hora}</span></td>
+                <td>${ent.modalidad}</td>
+                <td>${interviewBadge(ent.resultado)}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline interview-select" data-id="${ent.id}">Ver / Editar</button>
+                  <button class="btn btn-sm btn-outline interview-delete" data-id="${ent.id}">Borrar</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  `
+}
+
+function bindEntrevistasEvents() {
+  document.getElementById('interviewEvalForm')?.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const active = getActiveInterview()
+    if (!active) return
+    active.tec = Number(document.getElementById('evalTec').value)
+    active.com = Number(document.getElementById('evalCom').value)
+    active.exp = Number(document.getElementById('evalExp').value)
+    active.adap = Number(document.getElementById('evalAdap').value)
+    active.obs = document.getElementById('evalObs').value.trim()
+    active.resultado = document.getElementById('evalResultado').value
+    active.estado = active.resultado.includes('Cancelada') ? 'Cancelada' : active.resultado.includes('Por decidir') ? 'Programada' : 'Finalizada'
+    saveEntrevistasData()
+    Swal.fire({ title: 'Evaluacion guardada', icon: 'success', timer: 1600, showConfirmButton: false })
+    reRender()
+  })
+
+  document.querySelectorAll('.interview-select').forEach(btn => {
+    btn.addEventListener('click', () => {
+      entrevistaActivaId = Number(btn.dataset.id)
+      reRender()
+    })
+  })
+
+  document.querySelectorAll('.interview-delete').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const result = await Swal.fire({ title: 'Eliminar entrevista?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Eliminar', cancelButtonText: 'Cancelar' })
+      if (!result.isConfirmed) return
+      entrevistasData = getEntrevistasData().filter(e => e.id !== Number(btn.dataset.id))
+      entrevistaActivaId = entrevistasData[0]?.id || null
+      saveEntrevistasData()
+      reRender()
+    })
+  })
+
+  document.getElementById('interviewDateFilter')?.addEventListener('input', (e) => {
+    entrevistasFiltroFecha = e.target.value
+    reRender()
+  })
+
+  document.getElementById('clearInterviewFilter')?.addEventListener('click', () => {
+    entrevistasFiltroFecha = ''
+    reRender()
+  })
+
+  document.getElementById('cancelInterviewBtn')?.addEventListener('click', () => {
+    const active = getActiveInterview()
+    if (!active) return
+    active.estado = 'Cancelada'
+    active.resultado = 'Cancelada - No realizada'
+    saveEntrevistasData()
+    reRender()
+  })
+
+  document.getElementById('changeInterviewDateBtn')?.addEventListener('click', async () => {
+    const active = getActiveInterview()
+    if (!active) return
+    const result = await Swal.fire({
+      title: 'Cambiar fecha',
+      input: 'date',
+      inputValue: active.fecha,
+      showCancelButton: true,
+      confirmButtonText: 'Actualizar',
+      cancelButtonText: 'Cancelar',
+    })
+    if (result.isConfirmed && result.value) {
+      active.fecha = result.value
+      saveEntrevistasData()
+      reRender()
+    }
+  })
+
+  document.getElementById('newInterviewBtn')?.addEventListener('click', async () => {
+    const result = await Swal.fire({
+      title: 'Nueva entrevista',
+      html: `
+        <input id="swalCandidato" class="swal2-input" placeholder="Candidato">
+        <input id="swalVacante" class="swal2-input" placeholder="Vacante">
+        <input id="swalEmpresa" class="swal2-input" placeholder="Empresa">
+        <input id="swalFecha" class="swal2-input" type="date">
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Crear',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const candidato = document.getElementById('swalCandidato').value.trim()
+        const vacante = document.getElementById('swalVacante').value.trim()
+        const empresa = document.getElementById('swalEmpresa').value.trim()
+        const fecha = document.getElementById('swalFecha').value
+        if (!candidato || !vacante || !fecha) {
+          Swal.showValidationMessage('Completa candidato, vacante y fecha.')
+          return null
+        }
+        return { candidato, vacante, empresa: empresa || 'Empresa Confidencial', fecha }
+      },
+    })
+    if (!result.isConfirmed || !result.value) return
+    const nueva = {
+      id: Date.now(),
+      ...result.value,
+      reclutador: 'Daniel Ortega',
+      hora: '09:00 a.m.',
+      modalidad: 'Virtual',
+      estado: 'Programada',
+      tec: 3,
+      com: 3,
+      exp: 3,
+      adap: 3,
+      obs: 'Entrevista recien programada.',
+      resultado: 'En espera / Por decidir',
+    }
+    getEntrevistasData().unshift(nueva)
+    entrevistaActivaId = nueva.id
+    saveEntrevistasData()
+    reRender()
+  })
+}
+
+const REPORT_DATA = {
+  kpis: [
+    { id: 'vacantes', label: 'Vacantes activas', value: 24, hint: 'Vacantes actualmente disponibles' },
+    { id: 'postulaciones', label: 'Postulaciones', value: 186, hint: 'Postulaciones recibidas' },
+    { id: 'entrevistas', label: 'Entrevistas programadas', value: 32, hint: 'Entrevistas pendientes' },
+    { id: 'cubiertas', label: 'Vacantes cubiertas', value: 18, hint: 'Vacantes completadas' },
+  ],
+  estados: [
+    { label: 'Postuladas', value: 142 },
+    { label: 'En revision', value: 98 },
+    { label: 'Preseleccionados', value: 61 },
+    { label: 'Entrevistados', value: 40 },
+    { label: 'Contratados', value: 18 },
+  ],
+  ranking: [
+    { nombre: 'Maria Rodriguez', postulaciones: 45 },
+    { nombre: 'Carlos Mendez', postulaciones: 38 },
+    { nombre: 'Laura Vargas', postulaciones: 31 },
+    { nombre: 'Andres Solano', postulaciones: 27 },
+    { nombre: 'Diana Chaves', postulaciones: 22 },
+  ],
+}
+
+function renderReportes() {
+  const max = Math.max(...REPORT_DATA.estados.map(item => item.value))
+  return `
+    <header class="dashboard-header">
+      <div><h1>Reportes</h1><p>Consulta el rendimiento del proceso de reclutamiento.</p></div>
+      <button class="btn btn-primary" id="exportReportsBtn">Exportar CSV</button>
+    </header>
+    <section class="dashboard-card report-filters">
+      <select class="form-input"><option>Este mes</option><option>Mes pasado</option><option>Este trimestre</option></select>
+      <select class="form-input"><option>Todos los reclutadores</option><option>Maria Rodriguez</option><option>Carlos Mendez</option></select>
+      <select class="form-input"><option>Todas las empresas</option><option>Tech Solutions CR</option><option>Global Tech</option></select>
+      <button class="btn btn-outline" id="applyReportFilters">Aplicar filtros</button>
+    </section>
+    <section class="dashboard-stats">
+      ${REPORT_DATA.kpis.map(kpi => `
+        <article class="stat-card report-stat">
+          <span class="stat-card-number">${kpi.value}</span>
+          <span class="stat-card-label">${kpi.label}</span>
+          <small>${kpi.hint}</small>
+        </article>
+      `).join('')}
+    </section>
+    <section class="report-grid">
+      <article class="dashboard-card">
+        <h2>Estado de las postulaciones</h2>
+        <div class="admin-bar-chart">
+          ${REPORT_DATA.estados.map(item => `
+            <div class="admin-bar-col">
+              <span>${item.value}</span>
+              <div class="admin-bar" style="height:${(item.value / max) * 100}%"></div>
+              <small>${item.label}</small>
+            </div>
+          `).join('')}
+        </div>
+      </article>
+      <article class="dashboard-card">
+        <h2>Rendimiento de reclutadores</h2>
+        <div class="ranking-list">
+          ${REPORT_DATA.ranking.map((item, index) => `
+            <div class="ranking-row">
+              <span class="ranking-position">${index + 1}</span>
+              <span>${item.nombre}</span>
+              <strong>${item.postulaciones}</strong>
+            </div>
+          `).join('')}
+        </div>
+      </article>
+    </section>
+    <section class="admin-section">
+      <h2>Reportes disponibles</h2>
+      <div class="modules-grid">
+        ${['Candidatos', 'Vacantes', 'Postulaciones', 'Entrevistas'].map(label => `
+          <button class="module-card report-card-action" data-report="${label}">
+            <h3>Reporte de ${label}</h3>
+            <p>Vista consolidada y lista para exportar.</p>
+          </button>
+        `).join('')}
+      </div>
+    </section>
+  `
+}
+
+function bindReportesEvents() {
+  document.getElementById('applyReportFilters')?.addEventListener('click', () => {
+    Swal.fire({ title: 'Filtros aplicados', icon: 'success', timer: 1400, showConfirmButton: false })
+  })
+
+  document.querySelectorAll('.report-card-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      Swal.fire({ title: btn.dataset.report, text: 'Reporte listo para revision y exportacion.', icon: 'info' })
+    })
+  })
+
+  document.getElementById('exportReportsBtn')?.addEventListener('click', () => {
+    const rows = ['Indicador,Valor', ...REPORT_DATA.kpis.map(kpi => `${kpi.label},${kpi.value}`)]
+    const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'nextstepp-reportes.csv'
+    link.click()
+    URL.revokeObjectURL(url)
+  })
 }
 
 function renderTareas() {
@@ -636,6 +1031,14 @@ function reRender() {
   if (currentSection === 'postulaciones') {
     bindPostulacionesEvents()
     if (postulacionesData.length === 0) loadPostulacionesData()
+  }
+
+  if (currentSection === 'entrevistas') {
+    bindEntrevistasEvents()
+  }
+
+  if (currentSection === 'reportes') {
+    bindReportesEvents()
   }
 }
 
@@ -733,5 +1136,10 @@ export function renderAdminComments() {
 
 export function renderAdminTodos() {
   currentSection = 'tareas'
+  reRender()
+}
+
+export function renderAdminReports() {
+  currentSection = 'reportes'
   reRender()
 }

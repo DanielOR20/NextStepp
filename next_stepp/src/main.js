@@ -12,6 +12,7 @@ import {
   renderAdminPosts,
   renderAdminComments,
   renderAdminTodos,
+  renderAdminReports,
 } from './pages/admin/dashboard.js'
 import { renderEmpresaDashboard } from './pages/client/empresas-clientes.js'
 
@@ -25,6 +26,7 @@ addRoute('/admin/carts', renderAdminCarts)
 addRoute('/admin/posts', renderAdminPosts)
 addRoute('/admin/comments', renderAdminComments)
 addRoute('/admin/todos', renderAdminTodos)
+addRoute('/admin/reportes', renderAdminReports)
 
 addRoute('/empresas-clientes', renderEmpresaDashboard)
 
