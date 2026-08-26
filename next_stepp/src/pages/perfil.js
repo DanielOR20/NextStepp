@@ -216,13 +216,42 @@ function showSuccess(message) {
   setTimeout(() => { profileSuccess.innerHTML = '' }, 4000)
 }
 
+function saveProfileAsPostulacion() {
+  const name = document.getElementById('pfName').value.trim()
+  const email = document.getElementById('pfEmail').value.trim()
+  const profession = document.getElementById('pfProfession').value.trim()
+  const experience = document.getElementById('pfExperience').value
+  const location = document.getElementById('pfLocation').value.trim()
+  const skills = document.getElementById('pfSkills').value.trim()
+
+  const postulacion = {
+    id: `local-${Date.now()}`,
+    userId: email,
+    title: profession,
+    body: `${name} — ${experience} de experiencia — ${location}. CV adjunto: ${uploadedFile?.name || 'No adjuntado'}.`,
+    tags: skills.split(',').map(s => s.trim()).filter(Boolean).slice(0, 4),
+    estado: 'revision',
+    candidato: name,
+    email,
+    experience,
+    location,
+    esLocal: true,
+    createdAt: new Date().toISOString()
+  }
+
+  const existing = JSON.parse(localStorage.getItem('nextstepp_postulaciones') || '[]')
+  existing.unshift(postulacion)
+  localStorage.setItem('nextstepp_postulaciones', JSON.stringify(existing))
+}
+
 document.getElementById('registerBtn').addEventListener('click', () => {
   const result = validateProfile()
   if (!result.valid) {
     profileSuccess.innerHTML = `<div class="success-message" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#ef4444;">⚠️ ${result.missing}</div>`
     return
   }
-  showSuccess('¡Perfil registrado con éxito!')
+  saveProfileAsPostulacion()
+  showSuccess('¡Perfil registrado con éxito! Tu postulación ha sido enviada al equipo de reclutamiento.')
 })
 
 document.getElementById('uploadBtn').addEventListener('click', () => {
@@ -231,7 +260,8 @@ document.getElementById('uploadBtn').addEventListener('click', () => {
     profileSuccess.innerHTML = `<div class="success-message" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#ef4444;">⚠️ ${result.missing}</div>`
     return
   }
-  showSuccess('¡Perfil subido con éxito!')
+  saveProfileAsPostulacion()
+  showSuccess('¡Perfil subido con éxito! Tu postulación ha sido enviada al equipo de reclutamiento.')
 })
 
 // ========== CV GENERATOR MODAL ==========

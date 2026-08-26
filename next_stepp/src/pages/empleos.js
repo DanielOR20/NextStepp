@@ -258,7 +258,7 @@ app.innerHTML = `
             <span class="job-salary">${job.salary}</span>
             <div style="display:flex; gap:8px; align-items:center;">
               <span class="job-location">${icons.location} ${job.location}</span>
-              <a href="#/login" class="btn btn-primary btn-sm" style="text-decoration:none; padding: 4px 10px; font-size: 0.75rem;">
+              <a href="index.html#/login" class="btn btn-primary btn-sm" style="text-decoration:none; padding: 4px 10px; font-size: 0.75rem;">
                 Postularme ↗
               </a>
             </div>

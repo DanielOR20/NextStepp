@@ -1202,6 +1202,152 @@
   font-size: 0.8rem;
 }
 
+/* ===================== ADMIN DANIEL MODULES ===================== */
+.dashboard-card {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.dashboard-card h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.interview-grid,
+.report-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.25fr);
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-form .form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.compact-actions {
+  margin: 1rem -1.5rem -1.5rem;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.inline-filters,
+.report-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.report-filters {
+  margin-bottom: 1.5rem;
+}
+
+.report-filters .form-input,
+.inline-filters .form-input {
+  width: auto;
+  min-width: 180px;
+}
+
+.muted-text {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.active-table-row td {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.report-stat small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.admin-bar-chart {
+  display: flex;
+  align-items: end;
+  gap: 1rem;
+  height: 260px;
+  padding-top: 1rem;
+}
+
+.admin-bar-col {
+  display: flex;
+  flex: 1;
+  min-width: 58px;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.admin-bar-col span {
+  color: var(--text-primary);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.admin-bar-col small {
+  min-height: 34px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.admin-bar {
+  width: 100%;
+  max-width: 56px;
+  min-height: 12px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--accent-gradient);
+  box-shadow: 0 8px 20px var(--accent-glow);
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ranking-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+}
+
+.ranking-position {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 800;
+  background: var(--accent-gradient);
+}
+
+.report-card-action {
+  width: 100%;
+  text-align: left;
+  font-family: var(--font);
+  cursor: pointer;
+}
+
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 768px) {
   .sidebar {
@@ -1274,5 +1420,16 @@
 
   .vacancy-details-grid {
     grid-template-columns: 1fr;
+  }
+
+  .interview-grid,
+  .report-grid,
+  .admin-form .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .report-filters .form-input,
+  .inline-filters .form-input {
+    width: 100%;
   }
 }
