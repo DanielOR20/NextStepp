@@ -13,7 +13,7 @@ export function renderLanding() {
   const suggestedTags = getSuggestedTags()
 
   const navLinks = user
-    ? `<li><a href="#${user.role === 'admin' ? '/admin/dashboard' : '/empresa/dashboard'}">Mi Panel</a></li>`
+    ? `<li><a href="#${user.role === 'admin' ? '/admin/dashboard' : '/empresas-clientes'}">Mi Panel</a></li>`
     : ''
 
   const authBtn = user
@@ -32,6 +32,7 @@ export function renderLanding() {
           <li><a href="#empleos">Empleos</a></li>
           <li><a href="#calificaciones">Calificaciones</a></li>
           <li><a href="#ia">Asistente IA</a></li>
+          <li><a href="perfil.html">Mi Perfil</a></li>
           ${navLinks}
         </ul>
         <div class="navbar-actions">
@@ -393,7 +394,7 @@ function setupLandingEvents(jobOffers) {
   if (profileBtn) {
     profileBtn.addEventListener('click', () => {
       const user = getCurrentUser()
-      navigate(user.role === 'admin' ? '/admin/dashboard' : '/empresa/dashboard')
+      navigate(user.role === 'admin' ? '/admin/dashboard' : '/empresas-clientes')
     })
   }
 
