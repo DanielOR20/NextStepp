@@ -2,10 +2,10 @@ import { icons } from './icons.js'
 
 const navItems = [
   { label: 'Inicio', href: '/inicio.html', id: 'inicio' },
+  { label: 'Mi Perfil', href: '/perfil.html', id: 'perfil' },
   { label: 'Empleos', href: '/empleos.html', id: 'empleos' },
   { label: 'Calificaciones', href: '/calificaciones.html', id: 'calificaciones' },
   { label: 'Asistente IA', href: '/ia.html', id: 'ia' },
-  { label: 'Mi Perfil', href: '/perfil.html', id: 'perfil' },
 ]
 
 export function renderTopPanel(activePage) {
