@@ -1,5 +1,5 @@
 {
-  "name": "next_stepp",
+  "name": "nextstepp",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,8 +10,5 @@
   },
   "devDependencies": {
     "vite": "^8.2.2"
-  },
-  "dependencies": {
-    "sweetalert2": "^11.26.25"
   }
 }
