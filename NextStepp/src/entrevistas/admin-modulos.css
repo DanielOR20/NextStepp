@@ -1,0 +1,178 @@
+body {
+  background-color: #0b1120;
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --bg-main: #0b1120;
+  --bg-card: #151e32;
+  --bg-input: #0b1120;
+  --border-color: #26334d;
+  --primary-blue: #3b82f6;
+  --primary-hover: #2563eb;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --danger: #ef4444;
+}
+
+.admin-container {
+  padding: 32px;
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, sans-serif;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.admin-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 6px 0;
+  color: #f0f2f7;
+}
+
+.admin-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 28px 0;
+}
+
+/* Grid layout de dos columnas */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.admin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.admin-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: var(--text-main);
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.admin-input, .admin-textarea, .admin-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.admin-input:focus, .admin-textarea:focus, .admin-select:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Selector de fecha con ícono claro */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Tarjetas de elementos en lista */
+.item-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: border-color 0.2s ease;
+}
+
+.item-card:hover {
+  border-color: #3b82f666;
+}
+
+.item-card strong {
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+.item-card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 8px 0 0 0;
+  line-height: 1.4;
+}
+
+/* Badges de Prioridad */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-alta { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef444444; }
+.badge-media { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid #f59e0b44; }
+.badge-baja { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid #10b98144; }
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: white;
+}
