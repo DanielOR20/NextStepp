@@ -1,11 +1,11 @@
 import { icons } from './icons.js'
 
 const navItems = [
-  { label: 'Inicio', href: 'inicio.html', id: 'inicio' },
-  { label: 'Empleos', href: 'empleos.html', id: 'empleos' },
-  { label: 'Calificaciones', href: 'calificaciones.html', id: 'calificaciones' },
-  { label: 'Asistente IA', href: 'ia.html', id: 'ia' },
-  { label: 'Mi Perfil', href: 'perfil.html', id: 'perfil' },
+  { label: 'Inicio', href: '/inicio.html', id: 'inicio' },
+  { label: 'Empleos', href: '/empleos.html', id: 'empleos' },
+  { label: 'Calificaciones', href: '/calificaciones.html', id: 'calificaciones' },
+  { label: 'Asistente IA', href: '/ia.html', id: 'ia' },
+  { label: 'Mi Perfil', href: '/perfil.html', id: 'perfil' },
 ]
 
 export function renderTopPanel(activePage) {
@@ -16,20 +16,23 @@ export function renderTopPanel(activePage) {
           <span class="logo-icon">NS</span>
           NextStepp
         </a>
-        <ul class="navbar-nav" id="navMenu">
-          ${navItems.map(item => `
-            <li>
-              <a href="${item.href}" ${item.id === activePage ? 'class="active"' : ''} ${item.highlight ? 'style="color: var(--accent-light); font-weight: 600;"' : ''}>
-                ${item.label}
-              </a>
-            </li>
-          `).join('')}
-        </ul>
-        <div class="navbar-actions">
-          <button class="btn btn-outline" id="loginPanelBtn" style="display:none;">Iniciar Sesión</button>
-          <button class="mobile-toggle" id="mobileToggle">${icons.menu}</button>
+        <nav>
+          <ul class="top-panel-nav">
+            ${navItems.map(item => `
+              <li>
+                <a href="${item.href}" class="${item.id === activePage ? 'active' : ''}">
+                  ${item.label}
+                </a>
+              </li>
+            `).join('')}
+          </ul>
+        </nav>
+        <div class="top-panel-actions">
+          <a href="index.html#/login" class="btn btn-primary" id="loginBtn">Iniciar Sesión</a>
+          <button class="top-panel-mobile-toggle" id="mobileToggle">${icons.menu}</button>
         </div>
       </div>
+
     </nav>
   `
 }
@@ -49,73 +52,6 @@ export function setupTopPanel() {
     mobileToggle.addEventListener('click', () => {
       navMenu.classList.toggle('open')
       mobileToggle.innerHTML = navMenu.classList.contains('open') ? icons.close : icons.menu
-    })
-  }
-}
-
-export function renderLoginModal() {
-  return `
-    <div class="modal-overlay" id="loginModal">
-      <div class="modal-window" style="max-width:420px;">
-        <div class="modal-win-header">
-          <div class="win-title">Iniciar Sesión</div>
-          <button class="win-close" id="closeLoginModal">✕</button>
-        </div>
-        <div class="modal-win-body">
-          <form id="inlineLoginForm">
-            <div class="win-form-group">
-              <label for="inlineEmail">Usuario / Email</label>
-              <input type="text" id="inlineEmail" class="sys-input" placeholder="tu@email.com" required />
-            </div>
-            <div class="win-form-group">
-              <label for="inlinePassword">Contraseña</label>
-              <input type="password" id="inlinePassword" class="sys-input" placeholder="••••••••" required />
-            </div>
-            <div class="modal-win-footer">
-              <button type="button" class="btn-tool" id="cancelLoginModal">Cancelar</button>
-              <button type="submit" class="btn-tool btn-tool-blue">Entrar</button>
-            </div>
-            <p style="text-align:center;margin-top:12px;font-size:0.85rem;color:var(--text-muted);">
-              ¿No tienes cuenta? <a href="#/register" style="color:var(--accent-light);">Regístrate</a>
-            </p>
-          </form>
-        </div>
-      </div>
-    </div>
-  `
-}
-
-export function setupLoginModal() {
-  const loginBtn = document.getElementById('loginPanelBtn')
-  const modal = document.getElementById('loginModal')
-  const closeBtn = document.getElementById('closeLoginModal')
-  const cancelBtn = document.getElementById('cancelLoginModal')
-  const form = document.getElementById('inlineLoginForm')
-
-  if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-      modal.classList.add('active')
-    })
-  }
-
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => modal.classList.remove('active'))
-  }
-
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', () => modal.classList.remove('active'))
-  }
-
-  if (modal) {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.classList.remove('active')
-    })
-  }
-
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault()
-      window.location.href = '/index.html#/login'
     })
   }
 }

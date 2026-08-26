@@ -1,10 +1,9 @@
 import '../styles/base.css'
-import '../styles/dashboard.css'
 import { icons } from '../icons.js'
-import { renderTopPanel, setupTopPanel, renderLoginModal, setupLoginModal, renderFooter } from '../sidebar.js'
+import { renderTopPanel, setupTopPanel, renderFooter } from '../sidebar.js'
 
 const topPanelContainer = document.getElementById('topPanelContainer')
-topPanelContainer.innerHTML = renderTopPanel('perfil') + renderLoginModal()
+topPanelContainer.innerHTML = renderTopPanel('perfil')
 
 const app = document.getElementById('app')
 app.innerHTML = `
@@ -477,4 +476,3 @@ function generatePDF(data) {
 }
 
 setupTopPanel()
-setupLoginModal()

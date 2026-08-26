@@ -1,7 +1,6 @@
 import '../styles/base.css'
-import '../styles/dashboard.css'
 import { icons } from '../icons.js'
-import { renderTopPanel, setupTopPanel, renderLoginModal, setupLoginModal, renderFooter } from '../sidebar.js'
+import { renderTopPanel, setupTopPanel, renderFooter } from '../sidebar.js'
 
 const ratings = [
   {
@@ -63,8 +62,63 @@ function renderStars(count) {
   return html
 }
 
+function getInitials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+}
+
+function renderRatingCard(r) {
+  return `
+    <div class="rating-card">
+      <div class="rating-header">
+        <div class="rating-avatar">${r.initials}</div>
+        <div class="rating-user-info">
+          <h4>${r.name}</h4>
+          <span>${r.role}</span>
+        </div>
+        <div class="rating-percentage">
+          <div class="percent">${r.percentage}%</div>
+          <div class="label">Match</div>
+        </div>
+      </div>
+      ${renderStars(r.stars)}
+      <div class="rating-bar">
+        <div class="rating-bar-fill" data-width="${r.percentage}"></div>
+      </div>
+      <p class="rating-text">"${r.text}"</p>
+    </div>
+  `
+}
+
+function renderRatingsGrid() {
+  const grid = document.getElementById('ratingsGrid')
+  grid.innerHTML = ratings.map(renderRatingCard).join('')
+  setupRatingBars()
+  setupHighlightClicks()
+}
+
+function setupRatingBars() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const fill = entry.target
+        fill.style.width = fill.dataset.width + '%'
+        observer.unobserve(fill)
+      }
+    })
+  }, { threshold: 0.3 })
+  document.querySelectorAll('.rating-bar-fill').forEach(bar => observer.observe(bar))
+}
+
+function setupHighlightClicks() {
+  document.querySelectorAll('.rating-text').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('highlighted')
+    })
+  })
+}
+
 const topPanelContainer = document.getElementById('topPanelContainer')
-topPanelContainer.innerHTML = renderTopPanel('calificaciones') + renderLoginModal()
+topPanelContainer.innerHTML = renderTopPanel('calificaciones')
 
 const app = document.getElementById('app')
 app.innerHTML = `
@@ -75,26 +129,51 @@ app.innerHTML = `
       <p>Conoce las experiencias y calificaciones de nuestra comunidad de profesionales.</p>
     </div>
     <div class="ratings-grid" id="ratingsGrid">
-      ${ratings.map(r => `
-        <div class="rating-card">
-          <div class="rating-header">
-            <div class="rating-avatar">${r.initials}</div>
-            <div class="rating-user-info">
-              <h4>${r.name}</h4>
-              <span>${r.role}</span>
-            </div>
-            <div class="rating-percentage">
-              <div class="percent">${r.percentage}%</div>
-              <div class="label">Match</div>
-            </div>
+      ${ratings.map(renderRatingCard).join('')}
+    </div>
+    <div class="add-rating-section">
+      <button class="add-rating-btn" id="addRatingBtn">
+        <span>${icons.star}</span> Agregar Calificación
+      </button>
+      <div class="add-rating-form" id="addRatingForm">
+        <h3>Nueva Calificación</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ratingName">Nombre</label>
+            <input type="text" id="ratingName" placeholder="Tu nombre completo" />
           </div>
-          ${renderStars(r.stars)}
-          <div class="rating-bar">
-            <div class="rating-bar-fill" data-width="${r.percentage}"></div>
+          <div class="form-group">
+            <label for="ratingRole">Rol / Cargo</label>
+            <input type="text" id="ratingRole" placeholder="Ej: Frontend Developer" />
           </div>
-          <p class="rating-text">"${r.text}"</p>
         </div>
-      `).join('')}
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ratingPercentage">Porcentaje de Match</label>
+            <input type="number" id="ratingPercentage" min="0" max="100" placeholder="Ej: 90" />
+          </div>
+          <div class="form-group">
+            <label>Estrellas</label>
+            <div class="stars-input" id="starsInput">
+              <button type="button" class="star-btn" data-value="1">&#9733;</button>
+              <button type="button" class="star-btn" data-value="2">&#9733;</button>
+              <button type="button" class="star-btn" data-value="3">&#9733;</button>
+              <button type="button" class="star-btn" data-value="4">&#9733;</button>
+              <button type="button" class="star-btn" data-value="5">&#9733;</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="ratingText">Comentario</label>
+            <textarea id="ratingText" placeholder="Describe tu experiencia con NextStepp..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" id="cancelRatingBtn">Cancelar</button>
+          <button class="btn-submit" id="submitRatingBtn">Enviar Calificación</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -131,17 +210,65 @@ app.innerHTML = `
   ${renderFooter()}
 `
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const fill = entry.target
-      fill.style.width = fill.dataset.width + '%'
-      observer.unobserve(fill)
-    }
-  })
-}, { threshold: 0.3 })
+let selectedStars = 0
 
-document.querySelectorAll('.rating-bar-fill').forEach(bar => observer.observe(bar))
+document.getElementById('addRatingBtn').addEventListener('click', () => {
+  document.getElementById('addRatingForm').classList.toggle('open')
+})
+
+document.getElementById('cancelRatingBtn').addEventListener('click', () => {
+  document.getElementById('addRatingForm').classList.remove('open')
+  document.getElementById('ratingName').value = ''
+  document.getElementById('ratingRole').value = ''
+  document.getElementById('ratingPercentage').value = ''
+  document.getElementById('ratingText').value = ''
+  selectedStars = 0
+  document.querySelectorAll('#starsInput .star-btn').forEach(b => b.classList.remove('active'))
+})
+
+document.querySelectorAll('#starsInput .star-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedStars = parseInt(btn.dataset.value)
+    document.querySelectorAll('#starsInput .star-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.value) <= selectedStars)
+    })
+  })
+})
+
+document.getElementById('submitRatingBtn').addEventListener('click', () => {
+  const name = document.getElementById('ratingName').value.trim()
+  const role = document.getElementById('ratingRole').value.trim()
+  const percentage = parseInt(document.getElementById('ratingPercentage').value)
+  const text = document.getElementById('ratingText').value.trim()
+
+  if (!name || !role || !percentage || !text || !selectedStars) {
+    return
+  }
+
+  ratings.push({
+    name,
+    initials: getInitials(name),
+    role,
+    percentage: Math.min(100, Math.max(0, percentage)),
+    stars: selectedStars,
+    text,
+  })
+
+  renderRatingsGrid()
+
+  document.getElementById('addRatingForm').classList.remove('open')
+  document.getElementById('ratingName').value = ''
+  document.getElementById('ratingRole').value = ''
+  document.getElementById('ratingPercentage').value = ''
+  document.getElementById('ratingText').value = ''
+  selectedStars = 0
+  document.querySelectorAll('#starsInput .star-btn').forEach(b => b.classList.remove('active'))
+
+  const grid = document.getElementById('ratingsGrid')
+  grid.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' })
+})
+
+setupRatingBars()
+setupHighlightClicks()
 
 setupTopPanel()
-setupLoginModal()
