@@ -54,6 +54,9 @@ export function renderLogin() {
             </button>
             <div class="auth-error" id="authError"></div>
             <p class="auth-link">¿No tienes cuenta? <a href="#/register">Registrar Empresa</a></p>
+            <a href="#/" class="btn btn-outline btn-lg" style="width:100%; margin-top:0.5rem; text-decoration:none; text-align:center; display:block;">
+              ← Volver al Inicio
+            </a>
           </form>
         </div>
       </div>

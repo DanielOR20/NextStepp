@@ -8,10 +8,37 @@ import {
   getCompanyById,
 } from '../../services/store.service.js'
 import { classifyCompany, classifyVacancy } from '../../services/ai.service.js'
+import { getPostulaciones, createPostulacion, updatePostulacion, deletePostulacion } from '../postulaciones/services/postulaciones.service.js'
 import { SIDEBAR_ITEMS } from '../../config/constants.js'
 import { statusBadge } from '../../utils/helpers.js'
+import Swal from 'sweetalert2'
 
 let currentSection = 'dashboard'
+
+let postulacionesData = []
+let postulacionesPage = 1
+let postulacionesSearch = ''
+let postulacionesFilter = 'all'
+const POST_PAGE_SIZE = 10
+
+const PUESTOS_ES = [
+  "Desarrollador Frontend Senior (React / TypeScript)",
+  "Ingeniero de Software Full Stack (Node.js)",
+  "Especialista en QA & Testing Automatizado",
+  "Diseñador UI/UX & Producto Digital",
+  "DevOps Engineer & Arquitecto Cloud (AWS)",
+  "Desarrollador Mobile (Flutter / Android)",
+  "Analista de Ciberseguridad & Auditoría",
+  "Líder Técnico de Arquitectura de Software",
+  "Administrador de Bases de Datos (PostgreSQL)",
+  "Scrum Master & Coordinador de Equipos Ágiles"
+]
+const CARTAS_ES = [
+  "Más de 5 años de experiencia liderando proyectos web, optimización continua y arquitecturas limpias.",
+  "Especialista en desarrollo frontend, componentes reutilizables, consumo de APIs y accesibilidad.",
+  "Amplia trayectoria en diseño de producto, pruebas continuas, CI/CD y despliegues productivos.",
+  "Conocimiento sólido en bases de datos relacionales, backend escalable y seguridad informática."
+]
 
 const MODULE_RENDERERS = {
   dashboard: renderDashboard,
@@ -289,9 +316,296 @@ function renderEmpresas() {
   `
 }
 
+function adaptarPostulacion(post) {
+  if (post.esModificado) return post
+  const idxP = (post.id - 1) % PUESTOS_ES.length
+  const idxC = (post.id - 1) % CARTAS_ES.length
+  return {
+    ...post,
+    title: PUESTOS_ES[idxP],
+    body: `${CARTAS_ES[idxC]} ${post.body ? `(Detalle: ${post.body.slice(0, 50)}...)` : ''}`,
+    tags: Array.isArray(post.tags) && post.tags.length > 0 ? post.tags.slice(0, 3) : ['Selección', 'Talento']
+  }
+}
+
+function getPostStatus(post) {
+  if (post.estado) return post.estado
+  const mod = post.id % 3
+  if (mod === 0) return 'entrevista'
+  if (mod === 1) return 'revision'
+  return 'pendiente'
+}
+
+function renderPostBadge(status) {
+  const map = {
+    entrevista: '<span class="status-badge" style="background:rgba(16,185,129,.15);color:#10b981;">Entrevista</span>',
+    revision: '<span class="status-badge" style="background:rgba(59,130,246,.15);color:#3b82f6;">En Revisión</span>',
+    pendiente: '<span class="status-badge" style="background:rgba(245,158,11,.15);color:#f59e0b;">Pendiente</span>',
+    aceptado: '<span class="status-badge" style="background:rgba(16,185,129,.15);color:#10b981;">Aceptado</span>',
+    rechazado: '<span class="status-badge" style="background:rgba(239,68,68,.15);color:#ef4444;">Rechazado</span>'
+  }
+  return map[status] || map.pendiente
+}
+
+function escapePostHTML(str) {
+  if (!str) return ''
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
+function getFilteredPostulaciones() {
+  const q = postulacionesSearch.toLowerCase()
+  return postulacionesData.filter(p => {
+    const matchQ = p.title?.toLowerCase().includes(q) || p.body?.toLowerCase().includes(q) || String(p.id).includes(q) || String(p.userId).includes(q) || (Array.isArray(p.tags) && p.tags.some(t => t.toLowerCase().includes(q)))
+    const matchS = postulacionesFilter === 'all' || getPostStatus(p) === postulacionesFilter
+    return matchQ && matchS
+  })
+}
+
+function renderPostulacionesTable() {
+  const filtered = getFilteredPostulaciones()
+  const total = filtered.length
+  const totalPages = Math.ceil(total / POST_PAGE_SIZE) || 1
+  if (postulacionesPage > totalPages) postulacionesPage = totalPages
+  if (postulacionesPage < 1) postulacionesPage = 1
+  const start = (postulacionesPage - 1) * POST_PAGE_SIZE
+  const pageItems = filtered.slice(start, start + POST_PAGE_SIZE)
+
+  const rows = pageItems.length === 0
+    ? '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">No se encontraron postulaciones.</td></tr>'
+    : pageItems.map(p => {
+        const status = getPostStatus(p)
+        const tags = (Array.isArray(p.tags) ? p.tags : []).map(t => `<span style="display:inline-block;padding:2px 8px;border-radius:9999px;border:1px solid var(--border);font-size:.7rem;color:var(--text-secondary);">${escapePostHTML(t)}</span>`).join(' ')
+        return `<tr>
+          <td style="font-weight:700;color:var(--accent);">#${p.id}</td>
+          <td style="font-weight:600;">${escapePostHTML(p.title)}</td>
+          <td style="color:var(--text-secondary);max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapePostHTML(p.body)}">${escapePostHTML(p.body)}</td>
+          <td>${tags}</td>
+          <td>${renderPostBadge(status)}</td>
+          <td style="text-align:center;font-weight:600;color:var(--success);">${Math.min(p.reactions?.likes || p.views || 92, 100)}%</td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-sm btn-outline post-edit-btn" data-id="${p.id}">Editar</button>
+            <button class="btn btn-sm btn-outline post-del-btn" data-id="${p.id}" style="color:#ef4444;border-color:rgba(239,68,68,.3);">Eliminar</button>
+          </td>
+        </tr>`
+      }).join('')
+
+  return `
+    <header class="dashboard-header">
+      <div><h1>Postulaciones</h1><p>Gestiona las postulaciones de candidatos a vacantes publicadas.</p></div>
+      <div style="display:flex;gap:.5rem;">
+        <button class="btn btn-primary" id="postNewBtn">+ Nueva Postulación</button>
+      </div>
+    </header>
+    <div class="dashboard-card" style="padding:1rem;margin-bottom:1rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
+      <input type="text" class="form-input" id="postSearch" placeholder="Buscar por título, ID, candidato..." value="${escapePostHTML(postulacionesSearch)}" style="flex:1;min-width:200px;" />
+      <select class="form-input" id="postFilter" style="width:auto;">
+        <option value="all" ${postulacionesFilter === 'all' ? 'selected' : ''}>Todos</option>
+        <option value="entrevista" ${postulacionesFilter === 'entrevista' ? 'selected' : ''}>Entrevista</option>
+        <option value="revision" ${postulacionesFilter === 'revision' ? 'selected' : ''}>En Revisión</option>
+        <option value="pendiente" ${postulacionesFilter === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+        <option value="aceptado" ${postulacionesFilter === 'aceptado' ? 'selected' : ''}>Aceptado</option>
+        <option value="rechazado" ${postulacionesFilter === 'rechazado' ? 'selected' : ''}>Rechazado</option>
+      </select>
+    </div>
+    <div class="dashboard-card" style="overflow-x:auto;">
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Puesto</th><th>Carta Presentación</th><th>Tags</th><th>Estado</th><th>Match</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div style="padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);font-size:.85rem;color:var(--text-secondary);">
+        <span>Página ${postulacionesPage} de ${totalPages} — ${total} registros</span>
+        <div style="display:flex;gap:.25rem;">
+          <button class="btn btn-sm btn-outline" id="postFirst" ${postulacionesPage <= 1 ? 'disabled' : ''}>«</button>
+          <button class="btn btn-sm btn-outline" id="postPrev" ${postulacionesPage <= 1 ? 'disabled' : ''}>‹</button>
+          <button class="btn btn-sm btn-outline" id="postNext" ${postulacionesPage >= totalPages ? 'disabled' : ''}>›</button>
+          <button class="btn btn-sm btn-outline" id="postLast" ${postulacionesPage >= totalPages ? 'disabled' : ''}>»</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="postModal" style="display:none;">
+      <div class="modal" style="max-width:520px;">
+        <div class="modal-header"><h3 id="postModalTitle">Nueva Postulación</h3><button class="modal-close" id="postModalClose">&times;</button></div>
+        <form id="postForm" style="padding:1.5rem;display:flex;flex-direction:column;gap:1rem;">
+          <input type="hidden" id="postEditId" />
+          <div class="form-group"><label>Candidato (UserID)</label><input class="form-input" type="number" id="postUserId" required /></div>
+          <div class="form-group"><label>Puesto / Título</label><input class="form-input" type="text" id="postTitle" required /></div>
+          <div class="form-group"><label>Carta de Presentación</label><textarea class="form-input" rows="3" id="postBody" required></textarea></div>
+          <div class="form-group"><label>Tags (separados por coma)</label><input class="form-input" type="text" id="postTags" placeholder="React, Frontend, Senior" /></div>
+          <div class="form-group" id="postStatusGroup" style="display:none;"><label>Estado</label>
+            <select class="form-input" id="postStatusSelect">
+              <option value="revision">En Revisión</option>
+              <option value="entrevista">Entrevista</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="aceptado">Aceptado</option>
+              <option value="rechazado">Rechazado</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:.5rem;justify-content:flex-end;">
+            <button type="button" class="btn btn-outline" id="postModalCancel">Cancelar</button>
+            <button type="submit" class="btn btn-primary" id="postSubmitBtn">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="postToastContainer" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;"></div>
+  `
+}
+
+function postToast(msg, type = 'success') {
+  const container = document.getElementById('postToastContainer')
+  if (!container) return
+  const t = document.createElement('div')
+  const colors = { success: 'var(--success)', error: 'var(--danger)', info: 'var(--accent)' }
+  t.style.cssText = `padding:.75rem 1rem;border-radius:var(--radius-sm);background:var(--card);border:1px solid ${colors[type] || colors.info};color:var(--text-primary);font-size:.85rem;box-shadow:var(--shadow-md);opacity:0;transition:opacity .3s;`
+  t.textContent = msg
+  container.appendChild(t)
+  requestAnimationFrame(() => t.style.opacity = '1')
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300) }, 3000)
+}
+
+function bindPostulacionesEvents() {
+  const search = document.getElementById('postSearch')
+  const filter = document.getElementById('postFilter')
+  if (search) {
+    search.addEventListener('input', (e) => { postulacionesSearch = e.target.value; postulacionesPage = 1; refreshPostulacionesTable() })
+  }
+  if (filter) {
+    filter.addEventListener('change', (e) => { postulacionesFilter = e.target.value; postulacionesPage = 1; refreshPostulacionesTable() })
+  }
+
+  document.getElementById('postFirst')?.addEventListener('click', () => { postulacionesPage = 1; refreshPostulacionesTable() })
+  document.getElementById('postPrev')?.addEventListener('click', () => { if (postulacionesPage > 1) { postulacionesPage--; refreshPostulacionesTable() } })
+  document.getElementById('postNext')?.addEventListener('click', () => {
+    const total = Math.ceil(getFilteredPostulaciones().length / POST_PAGE_SIZE) || 1
+    if (postulacionesPage < total) { postulacionesPage++; refreshPostulacionesTable() }
+  })
+  document.getElementById('postLast')?.addEventListener('click', () => {
+    postulacionesPage = Math.ceil(getFilteredPostulaciones().length / POST_PAGE_SIZE) || 1
+    refreshPostulacionesTable()
+  })
+
+  document.getElementById('postNewBtn')?.addEventListener('click', () => openPostModal())
+  document.getElementById('postModalClose')?.addEventListener('click', closePostModal)
+  document.getElementById('postModalCancel')?.addEventListener('click', closePostModal)
+  document.getElementById('postModal')?.addEventListener('click', (e) => { if (e.target.id === 'postModal') closePostModal() })
+
+  document.getElementById('postForm')?.addEventListener('submit', handlePostSubmit)
+
+  document.querySelectorAll('.post-edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = postulacionesData.find(x => String(x.id) === btn.dataset.id)
+      if (p) openPostModal(p)
+    })
+  })
+  document.querySelectorAll('.post-del-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const result = await Swal.fire({
+        title: '¿Eliminar postulación?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      })
+      if (!result.isConfirmed) return
+      try {
+        await deletePostulacion(btn.dataset.id)
+        postulacionesData = postulacionesData.filter(x => String(x.id) !== btn.dataset.id)
+        refreshPostulacionesTable()
+        Swal.fire({ title: 'Eliminada', text: 'Postulación eliminada correctamente.', icon: 'success', timer: 2000, showConfirmButton: false })
+      } catch (e) { Swal.fire({ title: 'Error', text: e.message, icon: 'error' }) }
+    })
+  })
+}
+
+function openPostModal(post = null) {
+  const modal = document.getElementById('postModal')
+  const title = document.getElementById('postModalTitle')
+  const statusGrp = document.getElementById('postStatusGroup')
+  document.getElementById('postEditId').value = post ? post.id : ''
+  document.getElementById('postUserId').value = post ? (post.userId || '') : ''
+  document.getElementById('postTitle').value = post ? post.title : ''
+  document.getElementById('postBody').value = post ? post.body : ''
+  document.getElementById('postTags').value = post && Array.isArray(post.tags) ? post.tags.join(', ') : ''
+  document.getElementById('postSubmitBtn').textContent = post ? 'Actualizar' : 'Guardar'
+  title.textContent = post ? `Editar Postulación #${post.id}` : 'Nueva Postulación'
+  statusGrp.style.display = post ? 'block' : 'none'
+  if (post) document.getElementById('postStatusSelect').value = getPostStatus(post)
+  modal.style.display = 'flex'
+}
+
+function closePostModal() {
+  document.getElementById('postModal').style.display = 'none'
+  document.getElementById('postForm').reset()
+}
+
+async function handlePostSubmit(e) {
+  e.preventDefault()
+  const editId = document.getElementById('postEditId').value
+  const btn = document.getElementById('postSubmitBtn')
+  btn.disabled = true
+  btn.textContent = 'Guardando...'
+
+  const data = {
+    userId: parseInt(document.getElementById('postUserId').value) || 1,
+    title: document.getElementById('postTitle').value.trim(),
+    body: document.getElementById('postBody').value.trim(),
+    tags: document.getElementById('postTags').value.split(',').map(t => t.trim()).filter(Boolean)
+  }
+
+  try {
+    if (editId) {
+      const estado = document.getElementById('postStatusSelect').value
+      await updatePostulacion(editId, { title: data.title, body: data.body })
+      const idx = postulacionesData.findIndex(x => String(x.id) === String(editId))
+      if (idx !== -1) postulacionesData[idx] = { ...postulacionesData[idx], ...data, estado, esModificado: true }
+      Swal.fire({ title: 'Actualizada', text: `Postulación #${editId} actualizada.`, icon: 'success', timer: 2000, showConfirmButton: false })
+    } else {
+      const newPost = await createPostulacion(data)
+      newPost.estado = 'revision'
+      newPost.esModificado = true
+      postulacionesData.unshift(newPost)
+      Swal.fire({ title: 'Creada', text: `Postulación #${newPost.id} registrada.`, icon: 'success', timer: 2000, showConfirmButton: false })
+    }
+    closePostModal()
+    postulacionesPage = 1
+    refreshPostulacionesTable()
+  } catch (err) {
+    Swal.fire({ title: 'Error', text: err.message, icon: 'error' })
+  } finally {
+    btn.disabled = false
+    btn.textContent = 'Guardar'
+  }
+}
+
+function refreshPostulacionesTable() {
+  const main = document.querySelector('.dashboard-main')
+  if (main) {
+    main.innerHTML = renderPostulacionesTable()
+    bindPostulacionesEvents()
+  }
+}
+
 function renderPostulaciones() {
-  const item = SIDEBAR_ITEMS.find(s => s.id === 'postulaciones')
-  return renderPlaceholder('Postulaciones', 'Gestiona las postulaciones de candidatos a vacantes publicadas.', item?.icon || '')
+  return renderPostulacionesTable()
+}
+
+async function loadPostulacionesData() {
+  try {
+    const data = await getPostulaciones(30, 0)
+    postulacionesData = (data.posts || []).map(adaptarPostulacion)
+    refreshPostulacionesTable()
+  } catch (e) {
+    console.error('Error cargando postulaciones:', e)
+  }
 }
 
 function renderEntrevistas() {
@@ -331,6 +645,11 @@ function reRender() {
     </div>
   `
   bindEvents()
+
+  if (currentSection === 'postulaciones') {
+    bindPostulacionesEvents()
+    if (postulacionesData.length === 0) loadPostulacionesData()
+  }
 }
 
 function bindEvents() {

@@ -6,7 +6,6 @@ const navItems = [
   { label: 'Calificaciones', href: 'calificaciones.html', id: 'calificaciones' },
   { label: 'Asistente IA', href: 'ia.html', id: 'ia' },
   { label: 'Mi Perfil', href: 'perfil.html', id: 'perfil' },
-  { label: 'Postulaciones', href: 'src/pages/postulaciones/postulaciones.html', id: 'postulaciones', highlight: true },
 ]
 
 export function renderTopPanel(activePage) {
@@ -77,7 +76,7 @@ export function renderLoginModal() {
               <button type="submit" class="btn-tool btn-tool-blue">Entrar</button>
             </div>
             <p style="text-align:center;margin-top:12px;font-size:0.85rem;color:var(--text-muted);">
-              ¿No tienes cuenta? <a href="src/pages/postulaciones/postulaciones.html" style="color:var(--accent-light);">Ver demo</a>
+              ¿No tienes cuenta? <a href="#/register" style="color:var(--accent-light);">Regístrate</a>
             </p>
           </form>
         </div>
