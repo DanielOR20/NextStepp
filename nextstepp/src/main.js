@@ -15,7 +15,12 @@ document.querySelector('#app').innerHTML = `
     <h1>Get started</h1>
     <p>Edit <code>src/main.js</code> and save to test <code>HMR</code></p>
   </div>
-  <button id="counter" type="button" class="counter"></button>
+  <div style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    <button id="counter" type="button" class="counter"></button>
+    <a href="/src/postulaciones/postulaciones.html" class="counter" style="text-decoration: none; font-weight: bold; background: linear-gradient(135deg, #aa3bff, #3b82f6); color: white; border: none;">
+      🚀 Abrir Módulo de Postulaciones (JobConnect)
+    </a>
+  </div>
 </section>
 
 <div class="ticks"></div>
