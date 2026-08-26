@@ -1,6 +1,6 @@
-import '../style.css'
+import '../styles/base.css'
 import { icons } from '../icons.js'
-import { renderTopPanel, setupTopPanel, renderLoginModal, setupLoginModal, renderFooter } from '../sidebar.js'
+import { renderTopPanel, setupTopPanel, renderFooter } from '../sidebar.js'
 
 const jobOffers = [
   {
@@ -203,7 +203,7 @@ const suggestedTags = [
 ]
 
 const topPanelContainer = document.getElementById('topPanelContainer')
-topPanelContainer.innerHTML = renderTopPanel('empleos') + renderLoginModal()
+topPanelContainer.innerHTML = renderTopPanel('empleos')
 
 const app = document.getElementById('app')
 app.innerHTML = `
@@ -476,4 +476,3 @@ function showToast(message) {
 
 updateResultsCount()
 setupTopPanel()
-setupLoginModal()

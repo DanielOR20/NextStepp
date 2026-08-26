@@ -1,6 +1,6 @@
-import '../style.css'
+import '../styles/base.css'
 import { icons } from '../icons.js'
-import { renderTopPanel, setupTopPanel, renderLoginModal, setupLoginModal, renderFooter } from '../sidebar.js'
+import { renderTopPanel, setupTopPanel, renderFooter } from '../sidebar.js'
 
 const ratings = [
   {
@@ -118,7 +118,7 @@ function setupHighlightClicks() {
 }
 
 const topPanelContainer = document.getElementById('topPanelContainer')
-topPanelContainer.innerHTML = renderTopPanel('calificaciones') + renderLoginModal()
+topPanelContainer.innerHTML = renderTopPanel('calificaciones')
 
 const app = document.getElementById('app')
 app.innerHTML = `
@@ -272,4 +272,3 @@ setupRatingBars()
 setupHighlightClicks()
 
 setupTopPanel()
-setupLoginModal()

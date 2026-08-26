@@ -1,9 +1,9 @@
-import '../style.css'
+import '../styles/base.css'
 import { icons } from '../icons.js'
-import { renderTopPanel, setupTopPanel, renderLoginModal, setupLoginModal, renderFooter } from '../sidebar.js'
+import { renderTopPanel, setupTopPanel, renderFooter } from '../sidebar.js'
 
 const topPanelContainer = document.getElementById('topPanelContainer')
-topPanelContainer.innerHTML = renderTopPanel('ia') + renderLoginModal()
+topPanelContainer.innerHTML = renderTopPanel('ia')
 
 const app = document.getElementById('app')
 app.innerHTML = `
@@ -88,4 +88,3 @@ chatInput.addEventListener('keydown', (e) => {
 })
 
 setupTopPanel()
-setupLoginModal()

@@ -1,9 +1,9 @@
-import '../style.css'
+import '../styles/base.css'
 import { icons } from '../icons.js'
-import { renderTopPanel, setupTopPanel, renderLoginModal, setupLoginModal, renderFooter } from '../sidebar.js'
+import { renderTopPanel, setupTopPanel, renderFooter } from '../sidebar.js'
 
 const topPanelContainer = document.getElementById('topPanelContainer')
-topPanelContainer.innerHTML = renderTopPanel('inicio') + renderLoginModal()
+topPanelContainer.innerHTML = renderTopPanel('inicio')
 
 const app = document.getElementById('app')
 app.innerHTML = `
@@ -47,4 +47,3 @@ app.innerHTML = `
 `
 
 setupTopPanel()
-setupLoginModal()
